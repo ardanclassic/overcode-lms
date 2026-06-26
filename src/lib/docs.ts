@@ -1,4 +1,4 @@
-import docsDataRaw from './docs-data.json';
+import docsTreeRaw from './docs-tree.json';
 
 export interface DocNode {
   name: string;
@@ -8,31 +8,32 @@ export interface DocNode {
   children?: DocNode[];
 }
 
-const docsData = docsDataRaw as {
+const docsTree = docsTreeRaw as {
   tree: DocNode[];
   slugs: string[][];
-  contents: Record<string, string>;
 };
 
 /**
  * Get the tree structure of the DOCS/v2 folder for the sidebar.
  */
 export function getDocsTree(): DocNode[] {
-  return docsData.tree || [];
+  return docsTree.tree || [];
 }
 
 /**
  * Get a flat list of all markdown file slugs for static generation.
  */
 export function getAllDocSlugs(): string[][] {
-  return docsData.slugs || [];
+  return docsTree.slugs || [];
 }
 
 /**
  * Get the content of a specific markdown file given its slug.
  */
 export function getDocContent(slug: string[]): string | null {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const contentsData = require('./docs-contents.json') as { contents: Record<string, string> };
   const key = slug.join('/');
-  return docsData.contents[key] || null;
+  return contentsData.contents[key] || null;
 }
 
