@@ -6,43 +6,50 @@ import { BookOpen, ChevronRight, PlayCircle, Star, Clock } from "lucide-react";
 import Link from "next/link";
 import { useProgressStore } from "@/store/useProgressStore";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-// Mock Data for Enrolled Courses
-const ENROLLED_COURSES = [
-  {
-    id: "web-dev-101",
-    title: "Vibe Coding (Web Based)",
-    instructor: "Andy Prasetyo",
-    progress: 45,
-    totalModules: 24,
-    completedModules: 11,
-    image: "bg-blue-500",
-    lastAccessed: "2 jam yang lalu",
-    instructorPhone: "6281234567890",
-  },
-  {
-    id: "scratch-kids",
-    title: "Scratch (for Kids) - Basic",
-    instructor: "Budi Santoso",
-    progress: 10,
-    totalModules: 15,
-    completedModules: 2,
-    image: "bg-orange-400",
-    lastAccessed: "3 hari yang lalu",
-    instructorPhone: null,
-  }
-];
+import { useEffect, useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
+import { courseService } from "@/services/course.service";
 
 export default function StudentCourseListPage() {
-  const { isEnrolled } = useProgressStore();
   const router = useRouter();
+  const user = useAuthStore(state => state.user);
+  const isAuthLoading = useAuthStore(state => state.isLoading);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isEnrolled) {
-      router.push("/student");
+    if (isAuthLoading) return;
+    if (!user) {
+      setIsLoading(false);
+      return;
     }
-  }, [isEnrolled, router]);
+
+    async function fetchCourses() {
+      try {
+        const data = await courseService.getEnrolledCourses(user!.id);
+        setCourses(data || []);
+      } catch (err) {
+        console.error("Error fetching courses:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchCourses();
+  }, [user, isAuthLoading]);
+
+  if (isLoading || isAuthLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-slate-500 font-medium">Memuat Kelas...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isEnrolled = courses.length > 0;
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
@@ -55,76 +62,79 @@ export default function StudentCourseListPage() {
         </div>
       </FadeIn>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {ENROLLED_COURSES.map((course, index) => (
-          <FadeIn key={course.id} delay={index * 0.1}>
-            <div onClick={() => router.push(`/student/course/${course.id}`)} className="block group cursor-pointer">
-              <div className="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:border-primary/30 transition-all duration-300">
-                {/* Course Header/Cover */}
-                <div className={`h-32 w-full ${course.image} relative p-6 flex flex-col justify-between overflow-hidden`}>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
-                  
-                  <div className="relative z-10 flex justify-between items-start">
-                    <span className="bg-white/20 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1.5">
+      {isEnrolled ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {courses.map((course, idx) => (
+            <FadeIn key={course.id} delay={idx * 0.1}>
+              <div className="glass-card rounded-2xl overflow-hidden hover:shadow-xl transition-all border border-slate-200 group flex flex-col h-full">
+                {/* Banner / Cover */}
+                <div className={`h-32 bg-blue-500 relative p-6 flex flex-col justify-end`}>
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-white/20 backdrop-blur-md text-white text-xs px-2 py-1 rounded font-medium flex items-center gap-1">
                       <Star size={12} className="fill-white" /> Aktif
                     </span>
                   </div>
-                  
-                  <div className="relative z-10 flex flex-col items-start">
-                    <h2 className="text-white text-xl font-bold truncate w-full">{course.title}</h2>
-                    <div className="flex items-center gap-3 mt-1">
-                      <p className="text-white/80 text-sm">Oleh: {course.instructor}</p>
-                      {course.instructorPhone && (
-                        <a
-                          href={`https://wa.me/${course.instructorPhone}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="bg-green-500 hover:bg-green-600 text-white text-[10px] px-2 py-0.5 rounded-md font-semibold transition-colors flex items-center gap-1 shadow-sm"
-                        >
-                          Hubungi WA
-                        </a>
-                      )}
-                    </div>
-                  </div>
+                  <h3 className="text-xl font-bold text-white z-10">{course.title}</h3>
+                  <p className="text-white/80 text-sm z-10 flex items-center gap-2">
+                    Oleh: {course.instructor} 
+                  </p>
                 </div>
 
-                {/* Course Details */}
-                <div className="p-6">
-                  <div className="flex justify-between items-end mb-2">
-                    <span className="text-sm font-semibold text-slate-700">Progress Belajar</span>
-                    <span className="text-lg font-black text-primary">{course.progress}%</span>
-                  </div>
-                  
-                  {/* Progress Bar */}
-                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-6">
-                    <div 
-                      className="h-full bg-primary rounded-full"
-                      style={{ width: `${course.progress}%` }}
-                    />
+                {/* Content */}
+                <div className="p-6 flex-1 flex flex-col">
+                  {/* Progress */}
+                  <div className="mb-6">
+                    <div className="flex justify-between items-end mb-2">
+                      <span className="text-sm font-semibold text-slate-700">Progress Belajar</span>
+                      <span className="text-lg font-bold text-primary">0%</span>
+                    </div>
+                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-primary rounded-full transition-all duration-1000"
+                        style={{ width: `0%` }}
+                      />
+                    </div>
                   </div>
 
+                  {/* Stats */}
                   <div className="flex items-center justify-between text-sm text-slate-500 mb-6">
-                    <div className="flex items-center gap-2">
-                      <BookOpen size={16} className="text-slate-400" />
-                      <span>{course.completedModules} / {course.totalModules} Selesai</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock size={16} className="text-slate-400" />
-                      <span>{course.lastAccessed}</span>
-                    </div>
+                    <span className="flex items-center gap-1.5">
+                      <BookOpen size={16} /> 0 Modul Selesai
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Clock size={16} /> Belum diakses
+                    </span>
                   </div>
 
-                  <Button className="w-full justify-between px-6 py-6 rounded-2xl bg-slate-50 text-slate-700 hover:bg-primary hover:text-white group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-none" variant="secondary">
-                    Lanjutkan Belajar <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
-                  </Button>
+                  {/* Action */}
+                  <div className="mt-auto pt-4 border-t border-slate-100">
+                    <Link href={`/student/course/${course.id}`}>
+                      <Button variant="ghost" className="w-full justify-between group-hover:bg-primary group-hover:text-white transition-colors">
+                        Lanjutkan Belajar <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          </FadeIn>
-        ))}
-      </div>
+            </FadeIn>
+          ))}
+        </div>
+      ) : (
+        <FadeIn delay={0.1} className="flex flex-col items-center justify-center py-16 text-center border-2 border-dashed border-slate-200 rounded-3xl bg-slate-50">
+          <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-slate-300 mb-6 shadow-sm">
+            <BookOpen size={48} />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-800 mb-3">Belum Ada Kelas</h2>
+          <p className="text-slate-500 max-w-md mb-8">
+            Anda belum terdaftar di kelas mana pun. Pastikan Anda telah memasukkan Enrollment Code dari guru Anda untuk mulai belajar.
+          </p>
+          <Link href="/student/enroll">
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
+              Gabung Kelas Sekarang
+            </Button>
+          </Link>
+        </FadeIn>
+      )}
     </div>
   );
 }

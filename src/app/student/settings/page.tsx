@@ -1,12 +1,13 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FadeIn } from "@/components/shared/FadeIn";
 import { Button } from "@/components/ui/Button";
 import { UserCircle, GraduationCap, Phone, CheckCircle2 } from "lucide-react";
 import { AvatarPicker } from "@/components/shared/AvatarPicker";
 import { useAuthStore } from "@/store/useAuthStore";
+import { profileService, UserProfile, StudentDetails } from "@/services/profile.service";
 
 export default function StudentSettingsPage() {
   const [isSaved, setIsSaved] = useState(false);
@@ -14,26 +15,120 @@ export default function StudentSettingsPage() {
   const [eduLevel, setEduLevel] = useState("SMP"); // Mock Default
   const isSchoolAge = ["SD", "SMP", "SMA"].includes(eduLevel);
   const isKid = ["TK", "SD"].includes(eduLevel);
-  
-  // Mock student ID and initial avatar
-  const MOCK_STUDENT_ID = "student-12345";
-  const [avatarUrl, setAvatarUrl] = useState(`https://api.dicebear.com/7.x/adventurer/svg?seed=${MOCK_STUDENT_ID}`);
-
+  const user = useAuthStore((state) => state.user);
   const updateUser = useAuthStore((state) => state.updateUser);
+  const initializeAuth = useAuthStore((state) => state.initialize);
+  const isAuthLoading = useAuthStore((state) => state.isLoading);
+
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    gender: "male",
+    studentPhone: "",
+    schoolName: "",
+    schoolGrade: "",
+    parentName: "",
+    parentPhone: "",
+  });
+
+  useEffect(() => {
+    if (isAuthLoading) return;
+    
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
+
+    async function loadProfile() {
+      try {
+        const profile = await profileService.getProfile(user!.id);
+        const details = await profileService.getStudentDetails(user!.id);
+        
+        if (profile) {
+          setAvatarUrl(profile.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${user!.id}`);
+          setFormData(prev => ({
+            ...prev,
+            fullName: profile.full_name || "",
+            gender: profile.gender || "male",
+            studentPhone: profile.phone || "",
+          }));
+        }
+        
+        if (details) {
+          setEduLevel(details.education_level || "SMP");
+          setFormData(prev => ({
+            ...prev,
+            schoolName: details.school_name || "",
+            schoolGrade: details.school_grade || "",
+            parentName: details.parent_name || "",
+            parentPhone: details.parent_phone || "",
+          }));
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadProfile();
+  }, [user, isAuthLoading]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+    
     setIsSaving(true);
     
-    updateUser({ avatar: avatarUrl });
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSaving(false);
+    try {
+      await profileService.updateProfile(user.id, {
+        full_name: formData.fullName,
+        gender: formData.gender as "male" | "female",
+        phone: formData.studentPhone,
+        avatar_url: avatarUrl
+      });
+
+      await profileService.updateStudentDetails(user.id, {
+        education_level: eduLevel,
+        school_name: formData.schoolName,
+        school_grade: formData.schoolGrade,
+        parent_name: formData.parentName,
+        parent_phone: formData.parentPhone,
+      });
+
+      updateUser({ avatar: avatarUrl, name: formData.fullName });
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 3000);
-    }, 1000);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menyimpan profil.");
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading || isAuthLoading) {
+    return (
+      <div className="flex justify-center items-center p-12 min-h-[50vh]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-slate-500 font-medium">Memuat Profil...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center p-12 min-h-[50vh]">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <UserCircle size={48} className="text-slate-300" />
+          <h2 className="text-xl font-bold text-slate-700">Profil Tidak Ditemukan</h2>
+          <p className="text-slate-500">Anda harus login untuk mengakses halaman ini.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
@@ -51,7 +146,7 @@ export default function StudentSettingsPage() {
           <AvatarPicker 
             currentAvatarUrl={avatarUrl}
             role="student"
-            userId={MOCK_STUDENT_ID}
+            userId={user.id}
             onAvatarChange={setAvatarUrl}
           />
         </FadeIn>
@@ -65,17 +160,26 @@ export default function StudentSettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">Nama Lengkap</label>
-              <input type="text" defaultValue="Budi Santoso" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+              <input 
+                type="text" 
+                value={formData.fullName} 
+                onChange={e => setFormData({...formData, fullName: e.target.value})}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+              />
             </div>
             
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">Email Utama</label>
-              <input type="email" defaultValue="budi@example.com" disabled className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 cursor-not-allowed" />
+              <input type="email" value={user.email} disabled className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 cursor-not-allowed" />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">Jenis Kelamin</label>
-              <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+              <select 
+                value={formData.gender}
+                onChange={e => setFormData({...formData, gender: e.target.value})}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              >
                 <option value="male">Laki-laki</option>
                 <option value="female">Perempuan</option>
               </select>
@@ -93,7 +197,12 @@ export default function StudentSettingsPage() {
 
             <div className="space-y-2">
               <label className="text-sm font-bold text-slate-700">Nomor WhatsApp Siswa</label>
-              <input type="tel" defaultValue="081234567890" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+              <input 
+                type="tel" 
+                value={formData.studentPhone} 
+                onChange={e => setFormData({...formData, studentPhone: e.target.value})}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+              />
             </div>
           </div>
         </FadeIn>

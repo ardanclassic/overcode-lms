@@ -10,9 +10,12 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight, ArrowLeft, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
+import { authService } from "@/services/auth.service";
+import { profileService } from "@/services/profile.service";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
 
 const registerSchema = z.object({
   education_level: z.string().min(1, "Pilih jenjang pendidikan"),
@@ -31,8 +34,9 @@ const ED_LEVELS = ["TK", "SD", "SMP", "SMA", "Mahasiswa", "Umum"];
 
 export default function RegisterPage() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const {
@@ -94,23 +98,39 @@ export default function RegisterPage() {
     return () => clearTimeout(timer);
   }, [currentStep, dynamicSteps]);
 
-  const onSubmit = (data: RegisterFormValues) => {
-    console.log("Registered Data:", data);
-    const mockId = "new-student-123";
-    const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${mockId}`;
-    
-    login({
-      id: mockId,
-      name: data.fullName,
-      email: data.email || data.parentPhone + "@noemail.com",
-      role: "student",
-      avatar: avatarUrl,
-    });
-    router.push("/student");
+  const onSubmit = async (data: RegisterFormValues) => {
+    setIsRegistering(true);
+    setErrorMsg("");
+    try {
+      const emailToUse = data.email || `${data.parentPhone}@noemail.com`;
+      const passToUse = data.password || "Rahasia123!";
+      
+      // 1. Sign Up to Supabase Auth
+      const authData = await authService.signUp(emailToUse, passToUse, {
+        full_name: data.fullName,
+        role: "student",
+        gender: data.gender,
+        education_level: data.education_level,
+        parent_name: data.parentName || null,
+        parent_phone: data.parentPhone || null,
+        student_phone: data.studentPhone || null,
+      });
+      
+      // Profil dan Detail Murid akan otomatis dibuat oleh Database Trigger di Supabase.
+      // (Lihat file supabase/add_trigger.sql)
+
+      // Use window.location.href to bypass Next.js client router cache and prevent infinite redirect loop
+      window.location.href = "/student";
+    } catch (error: any) {
+      console.error(error);
+      setErrorMsg(error.message || "Terjadi kesalahan saat mendaftar");
+      setIsRegistering(false);
+    }
   };
 
   return (
     <div className="w-full">
+      <LoadingOverlay isVisible={isRegistering} message="Menyiapkan ruang belajarmu..." />
       <div className="py-8 flex flex-col relative overflow-hidden">
         {/* Progress Bar */}
         <div className="absolute top-0 left-0 w-full h-1 bg-slate-200/60">
@@ -132,6 +152,11 @@ export default function RegisterPage() {
               return (
                 <div key={step.id} className="w-full flex-shrink-0 px-1">
                   <div className="mb-6">
+                    {errorMsg && (
+                      <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm font-medium">
+                        {errorMsg}
+                      </div>
+                    )}
                     <span className="text-primary font-bold text-sm mb-2 block">
                       {index + 1} / {dynamicSteps.length}
                     </span>

@@ -8,9 +8,10 @@ import { motion } from "framer-motion";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight, ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter, useSearchParams } from "next/navigation";
+import { authService } from "@/services/auth.service";
 import Link from "next/link";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email wajib diisi").email("Format email tidak valid"),
@@ -30,8 +31,9 @@ const STEPS = [
 
 export default function LoginPage() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const {
@@ -71,27 +73,26 @@ export default function LoginPage() {
     return () => clearTimeout(timer);
   }, [currentStep]);
 
-  const onSubmit = (data: LoginFormValues) => {
-    const role = data.email.includes("admin") ? "admin" : data.email.includes("teacher") ? "teacher" : "student";
-
-    const mockId = role === "teacher" ? "teacher-77889" : "student-12345";
-    const avatarUrl = role === "teacher" 
-      ? `https://api.dicebear.com/7.x/notionists/svg?seed=${mockId}`
-      : `https://api.dicebear.com/7.x/adventurer/svg?seed=${mockId}`;
-
-    login({
-      id: mockId,
-      name: data.email.split("@")[0],
-      email: data.email,
-      role: role,
-      avatar: avatarUrl,
-    });
-
-    router.push(`/${role}`);
+  const onSubmit = async (data: LoginFormValues) => {
+    setIsAuthenticating(true);
+    setErrorMsg("");
+    try {
+      const authData = await authService.signIn(data.email, data.password);
+      
+      // Based on our middleware and profiles, we should fetch their role to redirect properly.
+      // But actually middleware.ts handles redirect to dashboard from /login if authenticated!
+      // So we can just router.refresh() or router.push('/') and middleware will route them.
+      window.location.href = "/";
+    } catch (error: any) {
+      console.error(error);
+      setErrorMsg("Kredensial tidak valid. Silakan coba lagi.");
+      setIsAuthenticating(false);
+    }
   };
 
   return (
     <div className="w-full">
+      <LoadingOverlay isVisible={isAuthenticating} message="Memverifikasi kredensial Anda..." />
       <div className="py-8 flex flex-col relative overflow-hidden">
         {/* Progress Bar */}
         <div className="absolute top-0 left-0 w-full h-1 bg-slate-200/60">
@@ -113,7 +114,12 @@ export default function LoginPage() {
               return (
                 <div key={step.id} className="w-full flex-shrink-0 px-1">
                   <div className="mb-6">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">{step.label}</h2>
+                    {errorMsg && (
+                      <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm font-medium">
+                        {errorMsg}
+                      </div>
+                    )}
+                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">Selamat Datang Kembali</h2>
                   </div>
 
                   <Input

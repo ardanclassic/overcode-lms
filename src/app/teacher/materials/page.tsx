@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Modal } from "@/components/ui/Modal";
+import { useAuthStore } from "@/store/useAuthStore";
 import { DUMMY_COURSE_ITEMS, buildCourseTree, CourseNode, ItemType, CourseItem, createSlug } from "@/lib/dummyData";
 
 const getTypeIcon = (type: ItemType) => {
@@ -119,10 +120,41 @@ export default function ManageMaterialsPage() {
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
 
+  const user = useAuthStore(state => state.user);
+
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1200);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!user) return;
+    const fetchMaterials = async () => {
+      try {
+        const { courseService } = await import("@/services/course.service");
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        
+        const courses = await courseService.getTeacherCourses(user.id);
+        
+        if (courses && courses.length > 0) {
+          const { data } = await supabase
+            .from('course_items')
+            .select('*')
+            .eq('course_id', courses[0].id)
+            .order('order_index');
+            
+          if (data && data.length > 0) {
+            setItems(data as any);
+          } else {
+            setItems([]);
+          }
+        } else {
+          setItems([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch materials", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchMaterials();
+  }, [user]);
 
   const courseTree = buildCourseTree(items);
   const folders = items.filter((i) => i.item_type === "folder");
@@ -481,7 +513,44 @@ export default function ManageMaterialsPage() {
       </div>
 
       <div className="max-w-4xl mx-auto">
-        <FadeIn className="space-y-2">{courseTree.map((node) => renderNode(node))}</FadeIn>
+        {courseTree.length === 0 ? (
+          <FadeIn delay={0.1} className="glass-card p-12 mt-4 rounded-3xl border border-slate-200/60 shadow-sm bg-white/50 flex flex-col items-center justify-center text-center">
+            <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+              <Folder className="text-slate-400" size={40} />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-800 mb-3">Belum Ada Materi</h2>
+            <p className="text-slate-500 max-w-md mb-8">
+              Mulai buat struktur kelas Anda dengan menambahkan Folder atau Materi Baru. Struktur yang rapi akan memudahkan murid dalam belajar.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button
+                onClick={() => {
+                  setIsFolderModalOpen(true);
+                  setIsMaterialModalOpen(false);
+                  setEditingNode(null);
+                }}
+                variant="secondary"
+                className="shadow-sm px-6"
+              >
+                <Folder size={18} className="mr-2" /> Folder Baru
+              </Button>
+              <Button
+                onClick={() => {
+                  setIsMaterialModalOpen(true);
+                  setIsFolderModalOpen(false);
+                  setEditingNode(null);
+                  setNewMaterialParent("none");
+                }}
+                variant="primary"
+                className="shadow-sm px-6"
+              >
+                <Plus size={18} className="mr-2" /> Materi Baru
+              </Button>
+            </div>
+          </FadeIn>
+        ) : (
+          <FadeIn className="space-y-2">{courseTree.map((node) => renderNode(node))}</FadeIn>
+        )}
       </div>
 
       <Modal isOpen={!!editingNode} onClose={() => setEditingNode(null)} title="Properties Panel">

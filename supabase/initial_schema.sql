@@ -2,20 +2,10 @@
 -- Auto-generated during development
 
 -- 1. DROP IF EXISTS (To allow clean resets)
--- Drop triggers first
-DROP TRIGGER IF EXISTS update_profiles_updated_at ON profiles;
-DROP TRIGGER IF EXISTS update_student_details_updated_at ON student_details;
-DROP TRIGGER IF EXISTS update_study_fields_updated_at ON study_fields;
-DROP TRIGGER IF EXISTS update_courses_updated_at ON courses;
-DROP TRIGGER IF EXISTS update_course_items_updated_at ON course_items;
-DROP TRIGGER IF EXISTS update_student_progress_updated_at ON student_progress;
-DROP TRIGGER IF EXISTS update_live_sessions_updated_at ON live_sessions;
-DROP TRIGGER IF EXISTS update_live_attendance_updated_at ON live_attendance;
-DROP FUNCTION IF EXISTS update_modified_column();
+-- Drop function (CASCADE handles its usages in triggers)
+DROP FUNCTION IF EXISTS update_modified_column() CASCADE;
 
--- Drop indexes
-DROP INDEX IF EXISTS idx_course_items_course_id;
-DROP INDEX IF EXISTS idx_course_items_parent_id;
+-- Drop tables (CASCADE automatically drops associated triggers and indexes)
 
 -- Drop tables
 DROP TABLE IF EXISTS vouchers CASCADE;
@@ -35,6 +25,7 @@ DROP TABLE IF EXISTS teacher_notes CASCADE;
 
 -- Drop types
 DROP TYPE IF EXISTS user_role CASCADE;
+DROP TYPE IF EXISTS user_gender CASCADE;
 DROP TYPE IF EXISTS top_up_status CASCADE;
 DROP TYPE IF EXISTS item_type CASCADE;
 DROP TYPE IF EXISTS progress_status CASCADE;
@@ -277,68 +268,161 @@ ALTER TABLE top_up_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE vouchers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE teacher_notes ENABLE ROW LEVEL SECURITY;
 
--- 6. RLS POLICIES
+-- 6. RLS POLICIES & HELPER FUNCTIONS
+
+-- Helper functions to prevent infinite recursion in RLS by using JWT claims
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+  SELECT (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin';
+$$ LANGUAGE sql STABLE;
+
+CREATE OR REPLACE FUNCTION public.is_teacher_or_admin()
+RETURNS BOOLEAN AS $$
+  SELECT (auth.jwt() -> 'user_metadata' ->> 'role') IN ('admin', 'teacher');
+$$ LANGUAGE sql STABLE;
 
 -- profiles
 CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Teachers and admins can view all profiles" ON profiles FOR SELECT USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'teacher')));
+CREATE POLICY "Users can insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Teachers and admins can view all profiles" ON profiles FOR SELECT USING (public.is_teacher_or_admin());
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Admins can update all profiles" ON profiles FOR UPDATE USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'));
+CREATE POLICY "Admins can update all profiles" ON profiles FOR UPDATE USING (public.is_admin());
 
 -- student_details
 CREATE POLICY "Students can view own details" ON student_details FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Teachers and Admins view all student details" ON student_details FOR SELECT USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'teacher')));
-CREATE POLICY "Teachers and Admins update all student details" ON student_details FOR UPDATE USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'teacher')));
+CREATE POLICY "Students can insert own details" ON student_details FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Teachers and Admins view all student details" ON student_details FOR SELECT USING (public.is_teacher_or_admin());
+CREATE POLICY "Teachers and Admins update all student details" ON student_details FOR UPDATE USING (public.is_teacher_or_admin());
 
 -- study_fields
 CREATE POLICY "Everyone can read study fields" ON study_fields FOR SELECT USING (true);
-CREATE POLICY "Only admins manage study fields" ON study_fields FOR ALL USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'));
+CREATE POLICY "Only admins manage study fields" ON study_fields FOR ALL USING (public.is_admin());
 
 -- user_study_fields
 CREATE POLICY "Users view own study fields" ON user_study_fields FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Admins manage user study fields" ON user_study_fields FOR ALL USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'));
+CREATE POLICY "Admins manage user study fields" ON user_study_fields FOR ALL USING (public.is_admin());
 
 -- teacher_invitations
 CREATE POLICY "Anyone can read valid invitations" ON teacher_invitations FOR SELECT USING (is_used = false AND expires_at > NOW());
-CREATE POLICY "Admins manage invitations" ON teacher_invitations FOR ALL USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'));
+CREATE POLICY "Admins manage invitations" ON teacher_invitations FOR ALL USING (public.is_admin());
 
 -- courses
-CREATE POLICY "Everyone can read published courses" ON courses FOR SELECT USING (is_published = true OR EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin') OR owner_id = auth.uid());
-CREATE POLICY "Teachers can manage own courses" ON courses FOR ALL USING (owner_id = auth.uid() OR EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'));
+CREATE POLICY "Everyone can read published courses" ON courses FOR SELECT USING (is_published = true OR public.is_admin() OR owner_id = auth.uid());
+CREATE POLICY "Teachers can manage own courses" ON courses FOR ALL USING (owner_id = auth.uid() OR public.is_admin());
 
 -- course_enrollments
 CREATE POLICY "Students can view own enrollments" ON course_enrollments FOR SELECT USING (auth.uid() = student_id);
 CREATE POLICY "Students can insert own enrollments" ON course_enrollments FOR INSERT WITH CHECK (auth.uid() = student_id);
-CREATE POLICY "Teachers view enrollments for own courses" ON course_enrollments FOR SELECT USING (EXISTS (SELECT 1 FROM courses c WHERE c.id = course_id AND c.owner_id = auth.uid()) OR EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'));
+CREATE POLICY "Teachers view enrollments for own courses" ON course_enrollments FOR SELECT USING (EXISTS (SELECT 1 FROM courses c WHERE c.id = course_id AND c.owner_id = auth.uid()) OR public.is_admin());
 
 -- course_items
-CREATE POLICY "Everyone can read published course items" ON course_items FOR SELECT USING (is_published = true OR EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'teacher')));
-CREATE POLICY "Teachers and admins can manage course items" ON course_items FOR ALL USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'teacher')));
+CREATE POLICY "Everyone can read published course items" ON course_items FOR SELECT USING (is_published = true OR public.is_teacher_or_admin());
+CREATE POLICY "Teachers and admins can manage course items" ON course_items FOR ALL USING (public.is_teacher_or_admin());
 
 -- student_progress
 CREATE POLICY "Students can view own progress" ON student_progress FOR SELECT USING (auth.uid() = student_id);
 CREATE POLICY "Students can insert own progress" ON student_progress FOR INSERT WITH CHECK (auth.uid() = student_id);
 CREATE POLICY "Students can update own progress" ON student_progress FOR UPDATE USING (auth.uid() = student_id);
-CREATE POLICY "Teachers and admins can view all progress" ON student_progress FOR SELECT USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'teacher')));
-CREATE POLICY "Teachers and admins can update all progress" ON student_progress FOR UPDATE USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'teacher')));
+CREATE POLICY "Teachers and admins can view all progress" ON student_progress FOR SELECT USING (public.is_teacher_or_admin());
+CREATE POLICY "Teachers and admins can update all progress" ON student_progress FOR UPDATE USING (public.is_teacher_or_admin());
 
 -- live_sessions
 CREATE POLICY "Students can view live sessions" ON live_sessions FOR SELECT USING (true);
-CREATE POLICY "Teachers and admins manage live sessions" ON live_sessions FOR ALL USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'teacher')));
+CREATE POLICY "Teachers and admins manage live sessions" ON live_sessions FOR ALL USING (public.is_teacher_or_admin());
 
 -- live_attendance
 CREATE POLICY "Students can view own attendance" ON live_attendance FOR SELECT USING (auth.uid() = student_id);
-CREATE POLICY "Teachers and admins manage live attendance" ON live_attendance FOR ALL USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role IN ('admin', 'teacher')));
+CREATE POLICY "Teachers and admins manage live attendance" ON live_attendance FOR ALL USING (public.is_teacher_or_admin());
 
 -- top_up_requests
 CREATE POLICY "Teachers can insert own top-ups" ON top_up_requests FOR INSERT WITH CHECK (auth.uid() = teacher_id);
 CREATE POLICY "Teachers can view own top-ups" ON top_up_requests FOR SELECT USING (auth.uid() = teacher_id);
-CREATE POLICY "Admins manage all top-ups" ON top_up_requests FOR ALL USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'));
+CREATE POLICY "Admins manage all top-ups" ON top_up_requests FOR ALL USING (public.is_admin());
 
 -- vouchers
 CREATE POLICY "Anyone can view active vouchers" ON vouchers FOR SELECT USING (is_active = true AND (expires_at IS NULL OR expires_at > NOW()));
-CREATE POLICY "Admins manage all vouchers" ON vouchers FOR ALL USING (EXISTS (SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.role = 'admin'));
+CREATE POLICY "Admins manage all vouchers" ON vouchers FOR ALL USING (public.is_admin());
 
 -- teacher_notes
 CREATE POLICY "Teachers manage own notes" ON teacher_notes FOR ALL USING (auth.uid() = teacher_id);
 
+-- 6. AUTOMATED TRIGGERS FOR PROFILES & STUDENT DETAILS
+
+-- Function to automatically create a profile and student details when a user signs up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+DECLARE
+  v_role public.user_role;
+  v_gender public.user_gender;
+BEGIN
+  -- Safe extraction and casting for role
+  BEGIN
+    v_role := CAST(new.raw_user_meta_data->>'role' AS public.user_role);
+  EXCEPTION WHEN OTHERS THEN
+    v_role := 'student'::public.user_role;
+  END;
+
+  IF v_role IS NULL THEN
+    v_role := 'student'::public.user_role;
+  END IF;
+
+  -- Safe extraction and casting for gender
+  BEGIN
+    IF new.raw_user_meta_data->>'gender' IS NOT NULL AND new.raw_user_meta_data->>'gender' != '' THEN
+      v_gender := CAST(new.raw_user_meta_data->>'gender' AS public.user_gender);
+    ELSE
+      v_gender := NULL;
+    END IF;
+  EXCEPTION WHEN OTHERS THEN
+    v_gender := NULL;
+  END;
+
+  -- 1. Create public.profiles record
+  INSERT INTO public.profiles (
+    id, 
+    email, 
+    full_name, 
+    role,
+    gender,
+    phone,
+    portfolio_url,
+    avatar_url
+  )
+  VALUES (
+    new.id, 
+    COALESCE(new.email, ''),
+    COALESCE(new.raw_user_meta_data->>'full_name', 'User'),
+    v_role,
+    v_gender,
+    new.raw_user_meta_data->>'phone',
+    new.raw_user_meta_data->>'portfolio_url',
+    'https://api.dicebear.com/7.x/adventurer/svg?seed=' || new.id
+  );
+  
+  -- 2. If role is student, also create student_details
+  IF v_role = 'student'::public.user_role THEN
+    INSERT INTO public.student_details (
+      id, 
+      education_level, 
+      parent_name, 
+      parent_phone, 
+      student_phone
+    )
+    VALUES (
+      new.id,
+      new.raw_user_meta_data->>'education_level',
+      new.raw_user_meta_data->>'parent_name',
+      new.raw_user_meta_data->>'parent_phone',
+      new.raw_user_meta_data->>'student_phone'
+    );
+  END IF;
+
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- Trigger to execute the function on auth.users INSERT
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();

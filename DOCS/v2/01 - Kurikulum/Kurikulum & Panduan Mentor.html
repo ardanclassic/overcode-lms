@@ -1,0 +1,2516 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panduan Mentor — Kursus Private Vibe Coding | Overcode</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0f0e0d;
+        --ink2: #3a3834;
+        --ink3: #6b6760;
+        --ink4: #9e9b96;
+        --bg: #faf9f7;
+        --surface: #f2f0eb;
+        --surface2: #e8e5de;
+        --border: #dbd8d0;
+        --accent: #e85d2f;
+        --accent2: #2d6a4f;
+        --accent3: #2b4999;
+        --accent4: #8b3a8b;
+        --yellow: #f5a623;
+        --serif: "DM Serif Display", serif;
+        --sans: "Outfit", sans-serif;
+        --mono: "DM Mono", monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(250, 249, 247, 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0;
+        overflow-x: auto;
+      }
+      nav a {
+        display: block;
+        padding: 14px 16px;
+        font-size: 11.5px;
+        font-weight: 500;
+        color: var(--ink3);
+        text-decoration: none;
+        white-space: nowrap;
+        border-bottom: 2px solid transparent;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        transition:
+          color 0.2s,
+          border-color 0.2s;
+      }
+      nav a:hover,
+      nav a.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+      nav .logo {
+        font-family: var(--serif);
+        font-size: 16px;
+        color: var(--ink);
+        margin-right: 1.5rem;
+        white-space: nowrap;
+        border-bottom: none !important;
+        padding-left: 0;
+      }
+
+      .page {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 3rem 2rem 6rem;
+      }
+      section {
+        margin-bottom: 5rem;
+        scroll-margin-top: 60px;
+      }
+      h1 {
+        font-family: var(--serif);
+        font-size: 3.2rem;
+        line-height: 1.1;
+        color: var(--ink);
+        margin-bottom: 0.5rem;
+      }
+      h2 {
+        font-family: var(--serif);
+        font-size: 2rem;
+        color: var(--ink);
+        margin-bottom: 1.5rem;
+      }
+      h3 {
+        font-family: var(--sans);
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 0.75rem;
+      }
+      h4 {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--ink3);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.5rem;
+      }
+      p {
+        color: var(--ink2);
+        margin-bottom: 1rem;
+      }
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      .hero {
+        padding: 4rem 0 3rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 4rem;
+      }
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .eyebrow::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .hero-sub {
+        font-size: 1.05rem;
+        color: var(--ink3);
+        max-width: 580px;
+        margin-top: 1rem;
+        line-height: 1.75;
+      }
+      .hero-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 2rem;
+      }
+      .tag {
+        font-size: 11px;
+        font-family: var(--mono);
+        padding: 4px 12px;
+        border-radius: 100px;
+        border: 1px solid var(--border);
+        color: var(--ink3);
+        background: var(--surface);
+      }
+      .tag.o {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: #fff4f0;
+      }
+      .tag.g {
+        border-color: var(--accent2);
+        color: var(--accent2);
+        background: #f0f7f4;
+      }
+      .tag.b {
+        border-color: var(--accent3);
+        color: var(--accent3);
+        background: #f0f4ff;
+      }
+
+      .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+        gap: 1rem;
+      }
+      .card-sm {
+        background: var(--surface);
+        border-radius: 10px;
+        padding: 1.25rem;
+      }
+      .c-o {
+        border-left: 3px solid var(--accent);
+      }
+      .c-g {
+        border-left: 3px solid var(--accent2);
+      }
+      .c-b {
+        border-left: 3px solid var(--accent3);
+      }
+      .c-p {
+        border-left: 3px solid var(--accent4);
+      }
+
+      .badge {
+        display: inline-block;
+        font-size: 10px;
+        font-family: var(--mono);
+        font-weight: 500;
+        padding: 3px 10px;
+        border-radius: 100px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .bo {
+        background: #fff4f0;
+        color: var(--accent);
+        border: 1px solid #f8bfad;
+      }
+      .bg {
+        background: #f0f7f4;
+        color: var(--accent2);
+        border: 1px solid #a3cbb8;
+      }
+      .bb {
+        background: #f0f4ff;
+        color: var(--accent3);
+        border: 1px solid #b0c0e8;
+      }
+      .bp {
+        background: #f9f0f9;
+        color: var(--accent4);
+        border: 1px solid #d8a8d8;
+      }
+      .bw {
+        background: var(--surface);
+        color: var(--ink3);
+        border: 1px solid var(--border);
+      }
+      .by {
+        background: #fdf6e3;
+        color: #8a6500;
+        border: 1px solid #f0d090;
+      }
+
+      .sesi {
+        display: grid;
+        grid-template-columns: 52px 1fr;
+        margin-bottom: 1px;
+      }
+      .sesi-num {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-right: none;
+        border-radius: 10px 0 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink4);
+        font-weight: 500;
+        min-height: 60px;
+      }
+      .sesi-body {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 0 10px 10px 0;
+        padding: 1.25rem 1.5rem;
+      }
+      .sesi-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        color: var(--ink);
+      }
+      .sesi:not(:last-child) .sesi-num,
+      .sesi:not(:last-child) .sesi-body {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom-color: transparent;
+      }
+      .sesi:not(:first-child) .sesi-num,
+      .sesi:not(:first-child) .sesi-body {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+
+      ul.lst {
+        padding-left: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      ul.lst li {
+        font-size: 13.5px;
+        color: var(--ink2);
+        padding-left: 1.25rem;
+        position: relative;
+        line-height: 1.6;
+      }
+      ul.lst li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+        font-size: 11px;
+        top: 3px;
+      }
+      ul.lst.chk li::before {
+        content: "✓";
+        color: var(--accent2);
+        font-size: 12px;
+      }
+      ul.lst.dot li::before {
+        content: "·";
+        color: var(--ink4);
+        font-size: 20px;
+        top: -3px;
+      }
+
+      .tl {
+        position: relative;
+        padding-left: 1.75rem;
+      }
+      .tl::before {
+        content: "";
+        position: absolute;
+        left: 7px;
+        top: 6px;
+        bottom: 6px;
+        width: 1px;
+        background: var(--border);
+      }
+      .tl-item {
+        position: relative;
+        margin-bottom: 1.25rem;
+      }
+      .tl-dot {
+        position: absolute;
+        left: -1.75rem;
+        top: 4px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid var(--accent);
+      }
+      .tl-dot.g {
+        border-color: var(--accent2);
+      }
+      .tl-dot.b {
+        border-color: var(--accent3);
+      }
+      .tl-dot.f {
+        background: var(--accent);
+      }
+      .tl-dot.fg {
+        background: var(--accent2);
+        border-color: var(--accent2);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+      }
+      th {
+        font-family: var(--mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--ink4);
+        font-weight: 500;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+      }
+      td {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--surface2);
+        color: var(--ink2);
+        vertical-align: top;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: var(--surface);
+      }
+
+      hr.div {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 2.5rem 0;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      .muted {
+        color: var(--ink4);
+        font-size: 13px;
+      }
+      .note {
+        background: #fffbf0;
+        border: 1px solid #f0d090;
+        border-radius: 10px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .note.b {
+        background: #f0f4ff;
+        border-color: #b0c0e8;
+      }
+      .note.g {
+        background: #f0f7f4;
+        border-color: #a3cbb8;
+      }
+      .note.r {
+        background: #fff4f0;
+        border-color: #f8bfad;
+      }
+      .flex {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .flex > * {
+        flex: 1;
+        min-width: 200px;
+      }
+      .phase {
+        background: var(--ink);
+        color: white;
+        border-radius: 7px;
+        padding: 5px 12px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin: 1.75rem 0 0.75rem;
+        display: inline-block;
+      }
+      .phase.o {
+        background: var(--accent);
+      }
+      .phase.g {
+        background: var(--accent2);
+      }
+      .phase.b {
+        background: var(--accent3);
+      }
+      .phase.p {
+        background: var(--accent4);
+      }
+      .sesi-time {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--accent);
+        font-weight: 500;
+        margin-bottom: 3px;
+      }
+      .code-box {
+        background: var(--surface);
+        border-radius: 8px;
+        padding: 1rem;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.8;
+        margin-bottom: 1rem;
+        border-left: 3px solid var(--accent);
+      }
+      .ref-note {
+        font-size: 11.5px;
+        font-family: var(--mono);
+        color: var(--ink4);
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+      }
+
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 2.2rem;
+        }
+        h2 {
+          font-size: 1.5rem;
+        }
+        .page {
+          padding: 2rem 1.25rem 4rem;
+        }
+        .card-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="#" class="logo">Vibe Coding</a>
+      <a href="#filosofi">Filosofi</a>
+      <a href="#fondasi">Materi Fondasi</a>
+      <a href="#lanjutan">Materi Lanjutan</a>
+      <a href="#sesi">Struktur Sesi</a>
+      <a href="#jalur4sesi">Jalur 4 Sesi</a>
+      <a href="#mentoring">Strategi Mentoring</a>
+      <a href="#tools">Tech Stack</a>
+      <a href="#intake">Intake</a>
+      <a href="#tips">Tips Mentor</a>
+    </nav>
+
+    <div class="page">
+      <!-- HERO -->
+      <div class="hero">
+        <div class="eyebrow">Panduan Mentor · Kursus Private Vibe Coding</div>
+        <h1>Kurikulum &amp; Panduan Mengajar</h1>
+        <p class="hero-sub">
+          Dokumen referensi komprehensif untuk memulai sebagai mentor — mencakup silabus tervalidasi, strategi mentoring
+          per tipe siswa, struktur sesi, dan panduan operasional dari intake hingga serah terima project.
+        </p>
+        <div class="hero-tags">
+          <span class="tag o">React JS</span>
+          <span class="tag o">Next.js / Vite</span>
+          <span class="tag o">Supabase</span>
+          <span class="tag o">Vercel / Netlify</span>
+          <span class="tag g">Antigravity</span>
+          <span class="tag g">GitHub</span>
+          <span class="tag b">SMP · SMA · Mahasiswa · Umum</span>
+          <span class="tag">Min. 4 sesi · 90 menit/sesi</span>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════
+       SECTION 1 · FILOSOFI
+  ════════════════════════════════════════ -->
+      <section id="filosofi">
+        <h2>Filosofi &amp; Prinsip Dasar</h2>
+
+        <div class="note">
+          <h4>Premis utama kursus ini</h4>
+          <p>
+            Siswa tidak perlu menjadi programmer. Mereka perlu menjadi <strong>builder</strong> — orang yang bisa
+            mengubah masalah nyata menjadi produk digital yang berfungsi, dengan AI sebagai eksekutor. Skill yang
+            diajarkan bukan sintaks kode, melainkan cara berpikir, cara berkomunikasi dengan AI, dan cara mengevaluasi
+            hasilnya.
+          </p>
+        </div>
+
+        <div class="card-grid" style="margin-bottom: 1.5rem">
+          <div class="card-sm">
+            <h4>Problem-First</h4>
+            <p style="font-size: 13px">
+              Setiap sesi dimulai dari masalah nyata siswa. Kode adalah alat — bukan tujuan. Project tanpa masalah nyata
+              biasanya tidak selesai.
+            </p>
+          </div>
+          <div class="card-sm">
+            <h4>Ship Early, Iterate Often</h4>
+            <p style="font-size: 13px">
+              Versi pertama tidak harus sempurna — yang penting bisa berjalan. Perbaiki secara bertahap. Ini adalah cara
+              kerja produk digital sungguhan.
+            </p>
+          </div>
+          <div class="card-sm">
+            <h4>Direction Over Execution</h4>
+            <p style="font-size: 13px">
+              Siswa adalah sutradara, AI adalah kamera. Skillnya ada di arah, bukan di teknis eksekusi. Arsitek tidak
+              harus bisa pegang sekop.
+            </p>
+          </div>
+          <div class="card-sm">
+            <h4>Independence as the Exit</h4>
+            <p style="font-size: 13px">
+              Kursus berhasil bukan saat siswa selesai project — tapi saat mereka bisa lanjut sendiri tanpa mentor, 6
+              bulan setelah kursus.
+            </p>
+          </div>
+        </div>
+
+        <h3>Mengapa "Vibe Coding"?</h3>
+        <p>
+          Istilah ini dicetuskan oleh AI researcher Andrej Karpathy pada Februari 2025 — menggambarkan cara membangun
+          software dengan mendeskripsikan apa yang diinginkan ke AI dalam bahasa sehari-hari, dan membiarkan AI yang
+          menulis kodenya. Yang diperlukan bukan kemampuan coding, melainkan:
+        </p>
+        <ul class="lst" style="margin-top: 0.75rem">
+          <li><strong>Kemampuan mendekomposisi masalah</strong> menjadi instruksi yang jelas dan terstruktur</li>
+          <li>
+            <strong>Kemampuan mengevaluasi output AI</strong> secara kritis — bukan sekadar "apakah ini benar?" tapi "di
+            mana yang mungkin keliru?"
+          </li>
+          <li>
+            <strong>Kemampuan iterasi</strong> — tahu kapan perlu refine prompt, kapan ganti pendekatan, kapan minta
+            ulang
+          </li>
+          <li>
+            <strong>Pemahaman konseptual</strong> tentang bagaimana bagian-bagian sistem saling terhubung, tanpa harus
+            tahu implementasinya
+          </li>
+        </ul>
+
+        <hr class="div" />
+
+        <h3>Target Kompetensi Akhir Siswa</h3>
+        <div class="card-grid">
+          <div class="card c-o">
+            <h4>Computational Thinking</h4>
+            <ul class="lst dot">
+              <li>Mampu memecah masalah kompleks menjadi langkah-langkah kecil yang bisa dieksekusi</li>
+              <li>Berpikir dalam sistem: memahami bagaimana komponen saling berkaitan</li>
+              <li>Terbiasa dengan pola iterasi: build → test → evaluate → improve</li>
+            </ul>
+          </div>
+          <div class="card c-g">
+            <h4>Prompt Engineering</h4>
+            <ul class="lst dot">
+              <li>Menulis prompt yang presisi, terstruktur, dan kontekstual</li>
+              <li>Menguasai teknik iterasi prompt untuk refine output secara bertahap</li>
+              <li>Membuat PRD (Product Requirements Document) sederhana sebelum build</li>
+            </ul>
+          </div>
+          <div class="card c-b">
+            <h4>Technical Literacy</h4>
+            <ul class="lst dot">
+              <li>Memahami konsep: component, state, routing, API, database — tanpa harus bisa menulisnya</li>
+              <li>Bisa membaca kode output AI dan mendeteksi bagian yang mungkin bermasalah</li>
+              <li>Deploy mandiri ke internet dan melakukan update secara berkala</li>
+            </ul>
+          </div>
+          <div class="card c-p">
+            <h4>Product Thinking</h4>
+            <ul class="lst dot">
+              <li>Membuat wireframe dan mendefinisikan scope sebelum memulai build</li>
+              <li>Membedakan fitur yang "must have" vs "nice to have"</li>
+              <li>Melakukan user testing mandiri dan iterasi berdasarkan feedback</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════
+       SECTION 2 · MATERI FONDASI
+  ════════════════════════════════════════ -->
+      <section id="fondasi">
+        <h2>Materi Fondasi</h2>
+
+        <div class="note b">
+          <h4>Tentang bagian ini</h4>
+          <p>
+            Materi fondasi adalah materi yang <strong>wajib dikuasai semua siswa</strong> sebelum masuk ke build project
+            yang sesungguhnya — apapun jalur atau kompleksitas project-nya. Silabus ini telah divalidasi berdasarkan
+            referensi kurikulum dari Vibe Coding Academy, Stanford Continuing Studies, dan praktisi aktif di komunitas
+            vibe coding 2025–2026.
+          </p>
+        </div>
+
+        <!-- F1 -->
+        <div class="phase o">F-1 · Problem Discovery &amp; Scoping</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">Fondasi 1</span>
+            <h3 style="margin: 0">Problem Discovery &amp; Project Scoping</h3>
+            <span class="muted" style="margin-left: auto; font-family: var(--mono); font-size: 11px">~45–60 menit</span>
+          </div>
+          <p>
+            Ini adalah fondasi dari segalanya. Project yang lahir dari masalah nyata dan terdefinisi dengan jelas akan
+            jauh lebih mudah dibangun dan lebih berguna. Banyak siswa yang langsung ingin build tanpa tahu betul apa
+            yang ingin diselesaikan — ini yang perlu diperbaiki di awal.
+          </p>
+
+          <h4 style="margin-top: 1rem">Yang diajarkan</h4>
+          <ul class="lst">
+            <li>
+              <strong>Teknik "5 Whys":</strong> menggali akar masalah, bukan gejala permukaan. "Saya ingin buat aplikasi
+              jadwal" → kenapa? → kenapa lagi? sampai ketemu masalah nyata.
+            </li>
+            <li>
+              <strong>Problem vs. Solution framing:</strong> tulis masalahmu dalam 2 kalimat tanpa menyebut teknologi
+              apapun. "Saya sering lupa deadline tugas karena catatannya tersebar di banyak tempat."
+            </li>
+            <li>
+              <strong>Feasibility check:</strong> apakah masalah ini realistis diselesaikan dalam durasi kursus yang
+              disepakati? Scope check awal mencegah frustrasi di tengah jalan.
+            </li>
+            <li>
+              <strong>User identification:</strong> siapa yang akan pakai aplikasi ini — diri sendiri, orang lain, atau
+              publik? Ini menentukan banyak keputusan desain.
+            </li>
+            <li>
+              <strong>MoSCoW method sederhana:</strong> pisahkan fitur Must Have, Should Have, Could Have, Won't Have.
+              Ini pondasi scope management sepanjang kursus.
+            </li>
+          </ul>
+
+          <h4 style="margin-top: 1.25rem">Latihan praktis</h4>
+          <p style="font-size: 13.5px">
+            Siswa menulis "Problem Brief" satu halaman: masalah yang ingin diselesaikan, siapa yang mengalaminya, dan
+            gambaran kasar solusi digitalnya. Ini dokumen pertama yang akan terus dirujuk sepanjang project.
+          </p>
+        </div>
+
+        <!-- F2 -->
+        <div class="phase o">F-2 · Computational Thinking &amp; Systems Thinking</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">Fondasi 2</span>
+            <h3 style="margin: 0">Cara Berpikir Builder: Computational &amp; Systems Thinking</h3>
+            <span class="muted" style="margin-left: auto; font-family: var(--mono); font-size: 11px">~45–60 menit</span>
+          </div>
+          <p>
+            Ini bukan tentang coding — ini tentang pola pikir. Dua kemampuan berpikir ini adalah yang paling membedakan
+            seseorang yang bisa vibe coding dengan baik vs. yang selalu stuck dan bergantung pada mentor.
+          </p>
+
+          <div class="flex" style="margin: 1rem 0">
+            <div class="note" style="margin-bottom: 0">
+              <h4>Computational Thinking</h4>
+              <ul class="lst dot">
+                <li>
+                  <strong>Decomposition:</strong> pecah masalah besar jadi langkah kecil yang bisa dikerjakan satu per
+                  satu — "membuat form login" bukan satu langkah, tapi bisa 5–6 sub-langkah
+                </li>
+                <li>
+                  <strong>Pattern recognition:</strong> kenali pola yang berulang — CRUD, form + submit + tampilkan
+                  data, ini pola yang sama di hampir semua aplikasi
+                </li>
+                <li>
+                  <strong>Abstraction:</strong> fokus pada "apa" yang diinginkan, abaikan dulu "bagaimana" cara
+                  teknisnya — biarkan AI yang urus implementasi
+                </li>
+                <li>
+                  <strong>Algorithm thinking:</strong> langkah 1 → 2 → 3, ada kondisi (if/else), ada pengulangan — ini
+                  logika dasar yang perlu dipahami meski tidak ditulis
+                </li>
+              </ul>
+            </div>
+            <div class="note" style="margin-bottom: 0">
+              <h4>Systems Thinking</h4>
+              <ul class="lst dot">
+                <li>
+                  Aplikasi adalah kumpulan <strong>komponen yang saling terhubung:</strong> tampilan (frontend), logika
+                  dan data (backend), database, autentikasi
+                </li>
+                <li>
+                  Tanpa mental model ini, kode AI-generated akan jadi "spaghetti" yang sulit di-maintain dan sering
+                  rusak
+                </li>
+                <li>
+                  Analogi yang berguna: <em>bangunan rumah</em> — ada pondasi, dinding, listrik, air. Masing-masing
+                  punya fungsi dan saling bergantung
+                </li>
+                <li>
+                  Siswa tidak perlu tahu cara membangunnya — tapi perlu tahu <strong>apa peran tiap bagian</strong> agar
+                  bisa mengarahkan AI dengan tepat
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <h4>Latihan praktis</h4>
+          <p style="font-size: 13.5px">
+            Minta siswa gambar "peta sistem" aplikasinya di kertas: kotak untuk tiap bagian utama (halaman, database,
+            pengguna), dan panah untuk menunjukkan bagaimana data mengalir. Tidak perlu teknis — cukup konseptual.
+          </p>
+        </div>
+
+        <!-- F3 -->
+        <div class="phase o">F-3 · Prompt Engineering</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">Fondasi 3</span>
+            <h3 style="margin: 0">Prompt Engineering: Berkomunikasi Efektif dengan AI</h3>
+            <span class="muted" style="margin-left: auto; font-family: var(--mono); font-size: 11px">~60–90 menit</span>
+          </div>
+          <p>
+            Ini adalah skill paling krusial dan paling sering diremehkan. Kualitas output AI hampir sepenuhnya
+            ditentukan oleh kualitas prompt. Dedikasikan waktu ekstra untuk bagian ini — ini investasi yang menghemat
+            waktu di semua sesi berikutnya.
+          </p>
+
+          <h4 style="margin-top: 1rem">Anatomi prompt yang efektif</h4>
+          <div class="code-box">
+            <span style="color: var(--accent3)">[KONTEKS PROJECT]</span> Saya sedang membangun aplikasi pencatat
+            pengeluaran harian untuk mahasiswa.<br />
+            <span style="color: var(--accent2)">[YANG DIINGINKAN]</span> Buat komponen form untuk menambah catatan
+            pengeluaran baru.<br />
+            <span style="color: var(--accent4)">[SPESIFIKASI DETAIL]</span> Form ini harus punya: input nama item, input
+            nominal (angka), dropdown kategori (makan, transport, hiburan, lain-lain), dan tombol "Catat".<br />
+            <span style="color: var(--yellow)">[CONSTRAINT TEKNIS]</span> Gunakan React dengan Tailwind CSS. Data
+            disimpan ke Supabase di tabel bernama "expenses".
+          </div>
+
+          <h4>Empat level berpikir sebelum menulis prompt</h4>
+          <p style="font-size: 13.5px; margin-bottom: 0.75rem">
+            Berdasarkan kurikulum Vibe Coding Academy — sebelum prompt apapun, siswa perlu menjawab empat pertanyaan ini
+            secara urut:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th>Pertanyaan</th>
+                <th>Contoh jawaban</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Logical</strong></td>
+                <td style="font-size: 13px">Apa yang sedang dibangun?</td>
+                <td style="font-size: 13px">"Ini aplikasi pencatat tugas untuk pelajar SMA."</td>
+              </tr>
+              <tr>
+                <td><strong>Analytical</strong></td>
+                <td style="font-size: 13px">Apa tujuan utamanya?</td>
+                <td style="font-size: 13px">"Pengguna bisa tambah, lihat, dan tandai tugas selesai."</td>
+              </tr>
+              <tr>
+                <td><strong>Computational</strong></td>
+                <td style="font-size: 13px">Bagaimana logikanya bekerja?</td>
+                <td style="font-size: 13px">"Tugas punya status, deadline, dan mata pelajaran."</td>
+              </tr>
+              <tr>
+                <td><strong>Procedural</strong></td>
+                <td style="font-size: 13px">Strategi fitur apa yang dipakai?</td>
+                <td style="font-size: 13px">"Tambah notifikasi, filter per hari, dan sort by deadline."</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4 style="margin-top: 1.25rem">Kesalahan prompt yang paling sering terjadi</h4>
+          <ul class="lst">
+            <li>
+              <strong>Terlalu vague:</strong> "Buat tombol" → tidak ada konteks. Ganti: "Buat tombol biru bertuliskan
+              'Simpan' di pojok kanan bawah form, dengan loading state saat diklik."
+            </li>
+            <li>
+              <strong>Terlalu banyak dalam satu prompt:</strong> minta 5 fitur sekaligus menghasilkan output yang
+              berantakan. Satu prompt = satu fokus.
+            </li>
+            <li>
+              <strong>Tidak menyertakan konteks project:</strong> AI tidak ingat percakapan sebelumnya. Selalu jelaskan
+              konteks di tiap sesi baru.
+            </li>
+            <li>
+              <strong>Langsung copy-paste tanpa baca:</strong> output AI bisa salah atau tidak sesuai. Selalu baca dulu
+              sebelum dipakai.
+            </li>
+            <li>
+              <strong>Menyerah setelah satu percobaan:</strong> iterasi adalah cara kerja yang normal, bukan tanda
+              gagal.
+            </li>
+          </ul>
+
+          <h4 style="margin-top: 1.25rem">Tiga jenis prompt yang harus dikuasai</h4>
+          <div class="card-grid" style="margin-top: 0.75rem">
+            <div class="card-sm">
+              <h4>Prompt Build</h4>
+              <p style="font-size: 13px">
+                Untuk membuat sesuatu dari nol. Harus mengandung: konteks project, deskripsi output, spesifikasi detail,
+                dan stack teknis yang dipakai.
+              </p>
+            </div>
+            <div class="card-sm">
+              <h4>Prompt Iterasi</h4>
+              <p style="font-size: 13px">
+                Untuk memodifikasi hasil yang sudah ada. Wajib sertakan kode yang ada, dan minta perubahan spesifik:
+                "sisanya jangan diubah, hanya bagian X."
+              </p>
+            </div>
+            <div class="card-sm">
+              <h4>Prompt Debug</h4>
+              <p style="font-size: 13px">
+                Untuk memperbaiki error. Struktur: "Ini errornya: [paste lengkap]. Ini kodenya: [paste]. Ini yang saya
+                coba lakukan: [deskripsi]. Apa yang salah dan bagaimana memperbaikinya?"
+              </p>
+            </div>
+          </div>
+
+          <h4 style="margin-top: 1.25rem">Latihan bertahap (4 level)</h4>
+          <div class="tl" style="margin-top: 0.75rem">
+            <div class="tl-item">
+              <div class="tl-dot f"></div>
+              <h4>Level 1 — Describe &amp; Generate</h4>
+              <p style="font-size: 13px">
+                Deskripsikan tampilan halaman yang dibayangkan. Generate lewat AI. Evaluasi: apakah sesuai? Apa yang
+                kurang?
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <h4>Level 2 — Specify &amp; Refine</h4>
+              <p style="font-size: 13px">
+                Minta perubahan spesifik pada hasil Level 1 sebanyak 3–5 kali. Latih presisi dan kesabaran dalam
+                iterasi.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot g"></div>
+              <h4>Level 3 — Feature Addition</h4>
+              <p style="font-size: 13px">
+                Minta satu fitur baru ditambahkan ke aplikasi yang sudah ada. Wajib sertakan konteks kode eksisting.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot b"></div>
+              <h4>Level 4 — Debug Session</h4>
+              <p style="font-size: 13px">
+                Sengaja buat error kecil, lalu minta siswa debug-kan sendiri ke AI. Evaluasi kualitas prompt debug
+                mereka.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- F4 -->
+        <div class="phase o">F-4 · PRD &amp; Wireframing</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">Fondasi 4</span>
+            <h3 style="margin: 0">Product Requirements Document (PRD) &amp; Wireframing</h3>
+            <span class="muted" style="margin-left: auto; font-family: var(--mono); font-size: 11px">~30–45 menit</span>
+          </div>
+          <p>
+            PRD adalah dokumen singkat yang menjelaskan apa yang akan dibangun, untuk siapa, dan bagaimana bentuknya —
+            sebelum satu baris kode pun ditulis. Ini adalah kebiasaan yang membedakan project yang selesai dengan yang
+            terlantar di tengah jalan.
+          </p>
+
+          <h4 style="margin-top: 1rem">Komponen PRD sederhana untuk siswa</h4>
+          <div class="code-box">
+            <span style="color: var(--accent3)">Nama project:</span> TaskMate — Pencatat Tugas Pelajar<br />
+            <span style="color: var(--accent3)">Masalah yang diselesaikan:</span> Tugas sekolah sering terlupa karena
+            catatan tersebar<br />
+            <span style="color: var(--accent3)">Pengguna:</span> Saya sendiri (pelajar SMA)<br />
+            <span style="color: var(--accent3)">Fitur Must Have:</span> Tambah tugas, lihat daftar tugas, tandai
+            selesai<br />
+            <span style="color: var(--accent3)">Fitur Nice to Have:</span> Filter per mata pelajaran, deadline
+            reminder<br />
+            <span style="color: var(--accent3)">Stack:</span> React + Tailwind + Supabase + Vercel<br />
+            <span style="color: var(--accent3)">Target selesai:</span> 8 sesi
+          </div>
+
+          <ul class="lst">
+            <li>
+              PRD ini bisa (dan sebaiknya) dibuat <strong>bersama AI</strong> — minta Claude atau ChatGPT bantu
+              menyusunnya berdasarkan Problem Brief yang sudah ditulis di F-1
+            </li>
+            <li>
+              <strong>Wireframe sederhana:</strong> sketsa kasar di kertas atau Excalidraw — petakan semua halaman dan
+              komponen utama di tiap halaman
+            </li>
+            <li>
+              Aturan wajib: <strong>"Gambar dulu 10 menit sebelum prompt pertama"</strong> — berlaku di setiap sesi
+              build
+            </li>
+            <li>
+              PRD dan wireframe menjadi <strong>konteks yang disertakan</strong> di prompt pertama setiap sesi baru
+            </li>
+          </ul>
+        </div>
+
+        <!-- F5 -->
+        <div class="phase o">F-5 · Version Control &amp; Checkpoint Habit</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">Fondasi 5</span>
+            <h3 style="margin: 0">Version Control &amp; Kebiasaan Checkpoint</h3>
+            <span class="muted" style="margin-left: auto; font-family: var(--mono); font-size: 11px">~30–45 menit</span>
+          </div>
+          <p>
+            Version control bukan topik teknis opsional — ini adalah <strong>jaring pengaman wajib</strong>. Tanpa ini,
+            satu prompt yang salah bisa menghancurkan jam kerja. Ajarkan ini di sesi pertama, bukan di sesi terakhir.
+          </p>
+
+          <ul class="lst">
+            <li>
+              <strong>Konsep inti:</strong> GitHub adalah "Ctrl+Z tanpa batas" — setiap commit adalah titik yang bisa
+              dibalik
+            </li>
+            <li>
+              <strong>Workflow minimal yang harus dihafal:</strong> buat repository → commit pertama → commit setelah
+              tiap fitur selesai → push ke GitHub
+            </li>
+            <li>
+              <strong>Commit message yang bermakna:</strong> "add expense form component" bukan "update" — ini penting
+              saat perlu balik ke versi lama
+            </li>
+            <li>
+              <strong>Aturan praktis:</strong> commit setiap kali satu fitur atau satu bagian sudah berjalan dengan baik
+              — jangan tunggu sampai "sempurna"
+            </li>
+            <li>
+              <strong>Untuk siswa non-teknis:</strong> gunakan GitHub Desktop (UI visual) atau fitur commit langsung
+              dari Antigravity — tidak perlu CLI
+            </li>
+          </ul>
+
+          <div class="note r" style="margin-top: 1rem">
+            <h4>Mengapa ini masuk fondasi, bukan modul akhir?</h4>
+            <p style="font-size: 13.5px">
+              Karena tanpa kebiasaan ini, siswa yang pertama kali terkena "kode rusak karena prompt salah" akan panik
+              dan tidak bisa pulih. Dengan version control yang sudah terpasang sejak hari pertama, situasi ini menjadi
+              mudah diatasi: cukup rollback ke commit terakhir yang berjalan.
+            </p>
+          </div>
+        </div>
+
+        <!-- F6 -->
+        <div class="phase o">F-6 · Tool Orientation</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">Fondasi 6</span>
+            <h3 style="margin: 0">Orientasi Ekosistem Tools</h3>
+            <span class="muted" style="margin-left: auto; font-family: var(--mono); font-size: 11px">~30–45 menit</span>
+          </div>
+          <p>
+            Siswa tidak perlu menguasai semua tools di hari pertama — tapi perlu tahu fungsi masing-masing dan kapan
+            dipakai. Demonstrasikan, jangan hanya jelaskan.
+          </p>
+
+          <div class="card-grid" style="margin-top: 0.75rem">
+            <div class="card-sm">
+              <h4>Antigravity</h4>
+              <p style="font-size: 13px">
+                Tools utama. Generate, edit, dan preview aplikasi dari prompt. Demo: buat halaman dari nol dalam 5
+                menit. Tunjukkan cara menyertakan kode eksisting saat iterasi.
+              </p>
+            </div>
+            <div class="card-sm">
+              <h4>GitHub</h4>
+              <p style="font-size: 13px">
+                Penyimpanan dan version control. Buat repository di sesi ini, lakukan commit pertama. Pakai GitHub
+                Desktop jika belum familiar terminal.
+              </p>
+            </div>
+            <div class="card-sm">
+              <h4>AI Chat (Claude / ChatGPT)</h4>
+              <p style="font-size: 13px">
+                Asisten pendukung: explain kode, brainstorm fitur, bantu tulis PRD, debug tambahan. Bukan pengganti
+                Antigravity — pelengkap yang berbeda fungsi.
+              </p>
+            </div>
+            <div class="card-sm">
+              <h4>Vercel / Netlify</h4>
+              <p style="font-size: 13px">
+                Publish ke internet gratis. Demo langsung: dari kode lokal ke live URL dalam 3 menit. Siswa wajib lihat
+                aplikasinya online setidaknya sekali di sesi awal — ini motivator kuat.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- F7 -->
+        <div class="phase o">F-7 · Critical Evaluation of AI Output</div>
+        <div class="card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">Fondasi 7</span>
+            <h3 style="margin: 0">Evaluasi Kritis Output AI</h3>
+            <span class="muted" style="margin-left: auto; font-family: var(--mono); font-size: 11px"
+              >~30 menit · diintegrasikan ke sesi build</span
+            >
+          </div>
+          <p>
+            Ini sering menjadi titik lemah pemula: menerima output AI begitu saja tanpa mengevaluasi. AI bisa salah,
+            bisa hallucinate, bisa menghasilkan kode yang "tampak benar" tapi tidak sesuai kebutuhan.
+          </p>
+
+          <ul class="lst">
+            <li>
+              <strong>Ganti mindset:</strong> bukan "apakah ini benar?" tapi
+              <em>"di bagian mana yang mungkin salah?"</em> — asumsi default harus skeptis, bukan percaya penuh
+            </li>
+            <li>
+              <strong>Checklist evaluasi cepat:</strong> apakah output ini melakukan yang diminta? Apakah ada bagian
+              yang tidak perlu dan bisa mengganggu? Apakah ada hardcode yang seharusnya dinamis?
+            </li>
+            <li>
+              <strong>Tes selalu setelah generate:</strong> jalankan, klik semua tombol, isi semua form — jangan hanya
+              lihat kodenya
+            </li>
+            <li>
+              <strong>Ketika AI "terlalu yakin":</strong> AI yang menjawab dengan percaya diri belum tentu benar. Ini
+              harus disampaikan eksplisit di awal kursus.
+            </li>
+            <li>
+              <strong>Batas vibe coding:</strong> ada jenis masalah yang AI tidak bisa selesaikan dengan baik —
+              mengenali kapan harus ganti pendekatan adalah skill tersendiri
+            </li>
+          </ul>
+
+          <div class="note" style="margin-top: 1rem">
+            <h4>Cara mengintegrasikan ini ke setiap sesi</h4>
+            <p style="font-size: 13.5px">
+              Setelah setiap generate, biasakan tanya ke siswa: "Sebelum kita pakai ini, apa yang perlu kita cek dulu?"
+              Buat ini jadi ritual — bukan sekedar materi yang diajarkan sekali.
+            </p>
+          </div>
+
+          <p class="ref-note">
+            Referensi: Vibe Coding Academy "Fundamentals" · IT Revolution "Essential Skills of a Vibe Coder" · Stanford
+            Continuing Studies "Vibe Coding: Building Software in Conversation with AI" · CodeRabbit Study Dec 2025
+            (AI-generated code has 1.7x more issues than human code)
+          </p>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════
+       SECTION 3 · MATERI LANJUTAN
+  ════════════════════════════════════════ -->
+      <section id="lanjutan">
+        <h2>Materi Lanjutan</h2>
+        <p>
+          Materi ini diajarkan sesuai kebutuhan project siswa — tidak semua akan diperlukan. Urutan dan kedalaman
+          disesuaikan selama sesi berlangsung.
+        </p>
+
+        <!-- L1 -->
+        <div class="phase">L-1 · UI &amp; Struktur Aplikasi</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem">
+            <span class="badge bw">Lanjutan 1</span>
+            <h3 style="margin: 0">Membaca &amp; Memodifikasi HTML/CSS/React</h3>
+          </div>
+          <p>
+            Siswa tidak perlu menulis dari nol — tapi harus bisa membaca output AI dan memodifikasi bagian yang perlu
+            diubah.
+          </p>
+          <ul class="lst">
+            <li>
+              <strong>HTML:</strong> struktur tag, nesting, atribut — cara membacanya seperti membaca outline dokumen
+            </li>
+            <li>
+              <strong>CSS/Tailwind:</strong> property yang paling sering diubah — warna, ukuran, jarak, font. Tailwind
+              class langsung bisa diubah tanpa tulis CSS baru
+            </li>
+            <li>
+              <strong>React — 3 konsep wajib:</strong> Component (potongan UI reusable), Props (data masuk ke
+              component), State (data yang bisa berubah dan mempengaruhi tampilan)
+            </li>
+            <li>
+              <strong>Browser DevTools:</strong> klik kanan → Inspect — cara lihat dan eksperimen perubahan CSS secara
+              langsung
+            </li>
+            <li><strong>Routing:</strong> konsep halaman berbeda = URL berbeda — cara buat navigasi antar halaman</li>
+          </ul>
+        </div>
+
+        <!-- L2 -->
+        <div class="phase">L-2 · Data &amp; Database</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem">
+            <span class="badge bw">Lanjutan 2</span>
+            <h3 style="margin: 0">Konsep Database &amp; Supabase</h3>
+          </div>
+          <p>
+            Untuk semua project yang perlu menyimpan dan mengambil data secara persisten. Analogikan dengan Google
+            Sheets — bukan dengan jargon teknis.
+          </p>
+          <ul class="lst">
+            <li>
+              <strong>Tabel = Sheet. Kolom = header. Baris = satu data.</strong> Primary key = nomor ID unik tiap baris.
+            </li>
+            <li><strong>Relasi antar tabel:</strong> "satu user punya banyak tugas" — cara menghubungkan data</li>
+            <li>
+              <strong>CRUD operations:</strong> Create (simpan), Read (ambil), Update (ubah), Delete (hapus) — empat
+              operasi dasar hampir semua aplikasi
+            </li>
+            <li>
+              <strong>Supabase dashboard:</strong> demo cara lihat dan edit data lewat Table Editor — seperti
+              spreadsheet online
+            </li>
+            <li>
+              <strong>Environment variables:</strong> cara simpan API key Supabase dengan aman di .env — jangan pernah
+              ada di kode yang di-push ke GitHub
+            </li>
+          </ul>
+        </div>
+
+        <!-- L3 -->
+        <div class="phase">L-3 · Authentication</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem">
+            <span class="badge bw">Lanjutan 3</span>
+            <h3 style="margin: 0">Autentikasi &amp; Keamanan Data Dasar</h3>
+          </div>
+          <p>
+            Hanya untuk project yang perlu membedakan pengguna atau memproteksi data. Diskusikan kebutuhan ini di sesi
+            intake.
+          </p>
+          <ul class="lst">
+            <li><strong>Supabase Auth:</strong> email/password login siap pakai — tidak perlu kode tambahan banyak</li>
+            <li>
+              <strong>Session &amp; token:</strong> analogi "kartu anggota" — dipakai untuk membuktikan identitas tiap
+              kali request
+            </li>
+            <li><strong>Row Level Security (RLS):</strong> setiap user hanya bisa akses baris data miliknya sendiri</li>
+            <li>
+              <strong>Protected routes:</strong> halaman yang hanya bisa diakses setelah login — cara implementasinya
+              via prompt Antigravity
+            </li>
+          </ul>
+        </div>
+
+        <!-- L4 -->
+        <div class="phase">L-4 · Advanced Features</div>
+        <div class="card-grid">
+          <div class="card c-b">
+            <span class="badge bb" style="margin-bottom: 0.75rem; display: inline-block">L-4a</span>
+            <h3>Upload File &amp; Media</h3>
+            <ul class="lst dot">
+              <li>ImageKit atau Cloudinary untuk hosting gambar/file</li>
+              <li>Supabase Storage untuk project skala kecil</li>
+              <li>Validasi tipe &amp; ukuran file, preview sebelum upload</li>
+            </ul>
+          </div>
+          <div class="card c-b">
+            <span class="badge bb" style="margin-bottom: 0.75rem; display: inline-block">L-4b</span>
+            <h3>Integrasi API Eksternal</h3>
+            <ul class="lst dot">
+              <li>Konsep API: "minta data atau layanan dari sistem lain"</li>
+              <li>Contoh praktis: WhatsApp notif (Fonnte), peta Google Maps, data cuaca</li>
+              <li>Prompt template untuk generate fetch call ke API tertentu</li>
+            </ul>
+          </div>
+          <div class="card c-b">
+            <span class="badge bb" style="margin-bottom: 0.75rem; display: inline-block">L-4c</span>
+            <h3>Responsif &amp; UX Polish</h3>
+            <ul class="lst dot">
+              <li>Test di mobile — Chrome DevTools device mode</li>
+              <li>Tailwind breakpoints: sm, md, lg</li>
+              <li>Loading state, empty state, error state — semua harus ada</li>
+              <li>Toast notification untuk feedback aksi</li>
+            </ul>
+          </div>
+          <div class="card c-b">
+            <span class="badge bb" style="margin-bottom: 0.75rem; display: inline-block">L-4d</span>
+            <h3>Deploy &amp; Maintenance Mandiri</h3>
+            <ul class="lst dot">
+              <li>Vercel (Next.js) atau Netlify (Vite/React) — connect GitHub, auto-deploy tiap push</li>
+              <li>Setup env variables di Vercel dashboard</li>
+              <li>Cara update aplikasi setelah live: edit → commit → push → otomatis deploy</li>
+              <li>Backup data Supabase, dokumentasi singkat untuk maintenance</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════
+       SECTION 4 · STRUKTUR SESI
+  ════════════════════════════════════════ -->
+      <section id="sesi">
+        <h2>Struktur Sesi &amp; Jalur Belajar</h2>
+
+        <div class="note b">
+          <h4>Catatan penting tentang jumlah sesi</h4>
+          <p>
+            Tidak ada jumlah sesi yang fix. <strong>Minimal 4 sesi</strong> untuk project paling sederhana (website
+            statis). Sesi tambahan ditentukan berdasarkan kompleksitas project dan kecepatan belajar siswa — bisa 5, 6,
+            7, 8, atau lebih. Yang penting setiap sesi punya satu target yang jelas, disepakati di akhir sesi
+            sebelumnya.
+          </p>
+        </div>
+
+        <h3>Struktur 90 Menit Per Sesi (Universal)</h3>
+        <table style="margin-bottom: 2rem">
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Segmen</th>
+              <th>Tujuan &amp; Cara</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">0–10 mnt</td>
+              <td><strong>Check-in &amp; PR Review</strong></td>
+              <td style="font-size: 13px">
+                Apa yang dikerjakan sendiri sejak sesi terakhir? Hambatan apa? Ini membangun kebiasaan kerja mandiri —
+                jangan dilewati.
+              </td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">10–20 mnt</td>
+              <td><strong>Micro-lesson</strong></td>
+              <td style="font-size: 13px">
+                Satu konsep yang relevan dengan yang akan dibangun hari ini. Maksimal 10 menit — jangan ceramah.
+                Langsung ke contoh konkret.
+              </td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">20–70 mnt</td>
+              <td><strong>Guided Build</strong></td>
+              <td style="font-size: 13px">
+                <em>Siswa yang pegang keyboard dan menulis prompt.</em> Mentor mengarahkan dengan pertanyaan, bukan
+                dengan mengambil alih. Biarkan siswa struggle sebentar — itu bagian dari proses.
+              </td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">70–85 mnt</td>
+              <td><strong>Review &amp; Debug</strong></td>
+              <td style="font-size: 13px">
+                Review hasil build. Identifikasi masalah. Siswa yang deskripsikan error ke AI — bukan mentor yang
+                menuliskan promptnya.
+              </td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">85–90 mnt</td>
+              <td><strong>Wrap-up &amp; PR</strong></td>
+              <td style="font-size: 13px">
+                Commit kode ke GitHub. Tentukan PR: apa yang dikerjakan sendiri sebelum sesi berikutnya. Tetapkan target
+                jelas untuk sesi selanjutnya.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- MILESTONE APPROACH -->
+        <h3>Pendekatan Milestone, Bukan Jadwal Fix</h3>
+        <p>
+          Daripada menentukan "8 sesi untuk jalur ini", lebih tepat menggunakan pendekatan milestone — setiap tahap
+          punya deliverable yang jelas, dan jumlah sesi menyesuaikan.
+        </p>
+
+        <div class="phase o">Milestone Wajib (Semua Project)</div>
+        <div class="sesi">
+          <div class="sesi-num">M1</div>
+          <div class="sesi-body">
+            <div class="sesi-title">Foundation &amp; Setup</div>
+            <ul class="lst dot">
+              <li>Problem Brief selesai ditulis, PRD disusun bersama AI</li>
+              <li>Wireframe semua halaman utama sudah digambar</li>
+              <li>Repository GitHub sudah dibuat, commit pertama sudah dilakukan</li>
+              <li>Tools terpasang: Antigravity, GitHub, Supabase (jika dibutuhkan), Vercel</li>
+              <li><strong>Output:</strong> project siap dibangun, semua setup berjalan</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sesi">
+          <div class="sesi-num">M2</div>
+          <div class="sesi-body">
+            <div class="sesi-title">First Working Version</div>
+            <ul class="lst dot">
+              <li>Halaman utama dan navigasi sudah bisa diakses</li>
+              <li>Minimal satu fitur inti sudah berjalan (walau belum sempurna)</li>
+              <li>Sudah pernah di-deploy ke internet dan siswa melihat karyanya live</li>
+              <li><strong>Output:</strong> "ini sudah jadi sesuatu" — motivator kuat untuk melanjutkan</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sesi">
+          <div class="sesi-num">M3</div>
+          <div class="sesi-body">
+            <div class="sesi-title">Core Features Complete</div>
+            <ul class="lst dot">
+              <li>Semua fitur Must Have dari PRD sudah berjalan</li>
+              <li>Data tersimpan dan bisa diambil (untuk project dengan database)</li>
+              <li>Alur pengguna utama bisa diselesaikan dari awal sampai akhir tanpa error</li>
+              <li><strong>Output:</strong> aplikasi "bisa dipakai" meski belum polish</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="sesi">
+          <div class="sesi-num">M4</div>
+          <div class="sesi-body">
+            <div class="sesi-title">Polish, Test &amp; Launch</div>
+            <ul class="lst dot">
+              <li>Responsif di mobile, loading/empty/error state semua ada</li>
+              <li>Siswa demo aplikasinya sendiri — presentasikan fitur ke mentor</li>
+              <li>Aplikasi live di domain final, semua env variable terpasang</li>
+              <li>Panduan maintenance ditulis: cara update, cara tambah fitur baru secara mandiri</li>
+              <li><strong>Output:</strong> project selesai, siswa siap mandiri</li>
+            </ul>
+          </div>
+        </div>
+
+        <hr class="div" />
+
+        <h3>Contoh Estimasi Berdasarkan Tipe Project</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Tipe Project</th>
+              <th>Estimasi Sesi</th>
+              <th>Stack yang Dipakai</th>
+              <th>Contoh Konkret</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Website Statis</strong></td>
+              <td><span class="badge bo">4–5 sesi</span></td>
+              <td style="font-size: 13px">React/Vite + Tailwind + Vercel</td>
+              <td style="font-size: 13px">Portfolio personal, profil usaha, halaman acara</td>
+            </tr>
+            <tr>
+              <td><strong>Web App CRUD</strong></td>
+              <td><span class="badge bo">6–9 sesi</span></td>
+              <td style="font-size: 13px">React + Supabase + Vercel</td>
+              <td style="font-size: 13px">To-do list, pencatat keuangan, form submission</td>
+            </tr>
+            <tr>
+              <td><strong>App dengan Auth</strong></td>
+              <td><span class="badge bo">8–11 sesi</span></td>
+              <td style="font-size: 13px">Next.js + Supabase Auth + Vercel</td>
+              <td style="font-size: 13px">Katalog produk dengan admin, sistem absensi</td>
+            </tr>
+            <tr>
+              <td><strong>App Kompleks</strong></td>
+              <td><span class="badge bo">12+ sesi</span></td>
+              <td style="font-size: 13px">Next.js + Supabase + ImageKit/API eksternal</td>
+              <td style="font-size: 13px">Booking app, manajemen kelas, marketplace mini</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note" style="margin-top: 1.25rem">
+          <h4>Cara komunikasikan estimasi ke siswa</h4>
+          <p style="font-size: 13.5px">
+            Selalu sampaikan estimasi sebagai <em>range</em>, bukan angka pasti: "project seperti ini biasanya butuh 6–9
+            sesi, tergantung seberapa cepat kamu belajar dan seberapa banyak kamu mengerjakan PR antar sesi." Ini jujur
+            dan menghindari konflik ekspektasi di tengah jalan.
+          </p>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════
+       SECTION 4B · JALUR 4 SESI — WEBSITE STATIS
+  ════════════════════════════════════════ -->
+      <section id="jalur4sesi">
+        <h2>Jalur 4 Sesi — Website Statis</h2>
+
+        <div class="note r">
+          <h4>Masalah di struktur fondasi lama</h4>
+          <p>
+            Jika F1–F7 diajarkan secara berurutan sebagai materi mandiri, total waktunya mencapai
+            <strong>270–375 menit (3–4 sesi penuh)</strong> — habis hanya untuk teori, tanpa satu halaman pun yang
+            jalan. Untuk siswa yang deal 4 sesi, ini fatal.
+          </p>
+        </div>
+
+        <div class="note g">
+          <h4>Solusi: Learn by Doing — Fondasi diintegrasikan ke dalam proses build</h4>
+          <p>
+            Jangan ajarkan fondasi dulu baru build. Ajarkan fondasi <strong>tepat saat dibutuhkan</strong>, sambil
+            langsung praktek. Siswa awam menyerap konsep jauh lebih cepat ketika mereka bisa langsung melihat efeknya.
+            Ini bukan pemangkasan materi — ini kontekstualisasi.
+          </p>
+        </div>
+
+        <div class="note b" style="margin-bottom: 2rem">
+          <h4>Scope & asumsi jalur ini</h4>
+          <p>
+            Target output: <strong>website statis live di internet</strong> — boleh berupa portfolio personal, halaman
+            profil usaha, atau halaman acara. Tanpa database, tanpa autentikasi, tanpa API, tanpa cloud storage. Stack:
+            React/Vite + Tailwind + Vercel/Netlify. Siswa: awam total, belum pernah coding.
+          </p>
+        </div>
+
+        <!-- PRE SESSION -->
+        <div class="phase o">Pra-Sesi · PR Intake (Dikirim H-3 Sebelum Sesi 1)</div>
+        <div class="card" style="margin-bottom: 0.75rem">
+          <p>
+            Siswa harus menyelesaikan ini sebelum Sesi 1 dimulai — kalau belum, 15 menit pertama Sesi 1 akan habis untuk
+            setup teknis saja.
+          </p>
+          <ul class="lst chk" style="margin-top: 0.75rem">
+            <li>Buat dan aktifkan akun GitHub di <strong>github.com</strong></li>
+            <li>Install GitHub Desktop dari <strong>desktop.github.com</strong></li>
+            <li>Daftar akun Antigravity</li>
+            <li>Daftar akun Vercel di <strong>vercel.com</strong> (pakai akun GitHub)</li>
+            <li>Laptop dengan Chrome/Edge versi terbaru, koneksi internet stabil</li>
+            <li>
+              <strong>Tulis Problem Brief:</strong> 1–2 paragraf — website ini untuk apa, untuk siapa, dan ingin
+              menonjolkan apa. Kirim ke mentor sebelum sesi.
+            </li>
+          </ul>
+          <div class="note" style="margin-top: 1rem; margin-bottom: 0">
+            <h4>Kenapa Problem Brief harus ditulis sebelum sesi?</h4>
+            <p style="font-size: 13.5px">
+              Mentor perlu membaca ini sebelum sesi untuk memperkirakan scope, menyiapkan pertanyaan scope-down jika
+              terlalu luas, dan memastikan sesi 1 bisa langsung masuk ke build — bukan eksplorasi masalah dari nol.
+            </p>
+          </div>
+        </div>
+
+        <!-- SESI 1 -->
+        <div class="phase o">Sesi 1 · Foundation + First Build</div>
+        <div class="card" style="margin-bottom: 0.25rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">90 menit</span>
+            <h3 style="margin: 0">Setup Lengkap → Halaman Pertama Live</h3>
+          </div>
+          <p>
+            <strong>Goal akhir sesi:</strong> Siswa punya repo GitHub, halaman pertama website-nya sudah bisa diakses
+            via link Vercel yang nyata.
+          </p>
+        </div>
+
+        <table style="margin-bottom: 1.5rem">
+          <thead>
+            <tr>
+              <th style="width: 120px">Waktu</th>
+              <th style="width: 180px">Kegiatan</th>
+              <th>Detail &amp; Cara Mengajar</th>
+              <th style="width: 100px">Fondasi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">0–15 mnt</td>
+              <td><strong>PRD Mini &amp; Wireframe</strong></td>
+              <td style="font-size: 13px">
+                Review Problem Brief bersama. Scope down ke website statis: berapa halaman, konten apa saja, siapa
+                pengunjungnya. Susun PRD mini langsung di Google Docs/Notion bersama siswa — 5 baris sudah cukup. Sketch
+                wireframe kasar di kertas: kotak per halaman, isi apa saja. Maksimal 10 menit sketching — jangan
+                perfeksionis.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F1 · F4</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">15–25 mnt</td>
+              <td><strong>Demo Tools</strong></td>
+              <td style="font-size: 13px">
+                Demo live Antigravity: mentor build halaman generik dari nol dalam 5 menit di depan siswa. Tunjukkan:
+                tulis prompt → lihat preview → iterate. Siswa cukup menonton dan bertanya. Jangan biarkan mereka ikuti
+                dulu — biarkan otak mereka menyerap polanya.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F6</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">25–30 mnt</td>
+              <td><strong>Anatomi Prompt</strong></td>
+              <td style="font-size: 13px">
+                Tunjukkan template prompt: [KONTEKS] → [YANG DIINGINKAN] → [SPESIFIKASI] → [CONSTRAINT TEKNIS]. Isi tiap
+                bagian dengan contoh dari project siswa sendiri. Cukup 5 menit — mereka akan belajar lebih banyak saat
+                langsung coba.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F3</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">30–65 mnt</td>
+              <td><strong>Guided Build Halaman Pertama</strong></td>
+              <td style="font-size: 13px">
+                Siswa tulis prompt pertama mereka menggunakan template tadi. Mentor di samping — jangan pegang keyboard
+                mereka. Biarkan prompt pertama hasilnya tidak sempurna. Iterate 2–3 kali. Setelah generate: tanya
+                "sebelum kita pakai ini, apa yang perlu kita cek?" — ini ritual evaluasi yang akan terus diulang. Jika
+                ada error kecil, tunjukkan cara debug: baca error keras-keras, formulasikan ke AI.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F3 · F7</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">65–78 mnt</td>
+              <td><strong>GitHub Setup &amp; Commit Pertama</strong></td>
+              <td style="font-size: 13px">
+                Buat repository GitHub baru (nama project). Export/sync kode dari Antigravity ke GitHub Desktop. Commit
+                pertama — siswa yang klik, mentor yang mengarahkan. Commit message: "initial commit — homepage".
+                Jelaskan analoginya: "ini Ctrl+Z tanpa batas, setiap commit adalah titik yang bisa kita balik."
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F5</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">78–88 mnt</td>
+              <td><strong>Deploy ke Vercel</strong></td>
+              <td style="font-size: 13px">
+                Connect repo GitHub ke Vercel. Deploy. Tunggu build selesai. Buka link live — ini momen yang perlu
+                dirayakan. Tunjukkan bahwa URL ini bisa dibagikan ke siapapun sekarang.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F6</span></td>
+            </tr>
+            <tr style="background: var(--surface)">
+              <td class="mono" style="color: var(--accent); white-space: nowrap">88–90 mnt</td>
+              <td><strong>PR &amp; Target S2</strong></td>
+              <td style="font-size: 13px">
+                <strong>PR konkret:</strong> "Tambahkan satu section baru di halaman yang sama — isi dengan konten nyata
+                kamu, bukan placeholder. Commit dan push sendiri setelah selesai." Target Sesi 2: semua halaman dari PRD
+                sudah ada, navigasi berjalan.
+              </td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- SESI 2 -->
+        <div class="phase o">Sesi 2 · Build Core Pages</div>
+        <div class="card" style="margin-bottom: 0.25rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">90 menit</span>
+            <h3 style="margin: 0">Semua Halaman Ada → Navigasi Berjalan</h3>
+          </div>
+          <p>
+            <strong>Goal akhir sesi:</strong> Semua halaman yang ada di PRD sudah bisa diakses via navigasi. Konten
+            mungkin masih placeholder — yang penting strukturnya jalan.
+          </p>
+        </div>
+
+        <table style="margin-bottom: 1.5rem">
+          <thead>
+            <tr>
+              <th style="width: 120px">Waktu</th>
+              <th style="width: 180px">Kegiatan</th>
+              <th>Detail &amp; Cara Mengajar</th>
+              <th style="width: 100px">Fondasi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">0–10 mnt</td>
+              <td><strong>Review PR</strong></td>
+              <td style="font-size: 13px">
+                Buka link live Vercel — lihat hasil PR siswa. Apa yang berhasil? Apa yang stuck? Kalau PR tidak
+                dikerjakan: tanyakan kenapa — hambatan teknis atau motivasi? Jangan langsung lanjut tanpa resolve
+                hambatan ini.
+              </td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">10–20 mnt</td>
+              <td><strong>Micro-lesson: Prompt Lanjutan</strong></td>
+              <td style="font-size: 13px">
+                Tunjukkan perbedaan konkret: prompt vague vs prompt spesifik — pakai contoh dari project siswa sendiri.
+                Perkenalkan Prompt Iterasi: "sisanya jangan diubah, hanya bagian X yang perlu diubah." Ini akan sangat
+                berguna hari ini karena mereka akan menambah halaman ke kode yang sudah ada.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F3</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">20–68 mnt</td>
+              <td><strong>Guided Build: Sisa Halaman</strong></td>
+              <td style="font-size: 13px">
+                Siswa prompt halaman berikutnya sesuai PRD (About, Kontak, Gallery, dll). Setiap halaman selesai →
+                commit langsung — bangun kebiasaan ini. Saat ada error: jalankan debug flow — siswa baca error
+                keras-keras, tulis prompt debug sendiri. Mentor hanya bertanya: "error ini bilang apa? kira-kira di
+                bagian mana yang salah?"
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F3 · F7</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">68–80 mnt</td>
+              <td><strong>Test &amp; Review Bersama</strong></td>
+              <td style="font-size: 13px">
+                Buka di browser, klik semua tombol navigasi, test setiap halaman. Biasakan ritual: "sebelum kita lanjut,
+                kita cek dulu." Buka Chrome DevTools → Device Mode: lihat tampilan di mobile. Catat apa yang perlu
+                diperbaiki di Sesi 3.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F7</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">80–88 mnt</td>
+              <td><strong>Commit + Push</strong></td>
+              <td style="font-size: 13px">
+                Commit semua perubahan. Push ke GitHub. Vercel auto-deploy berjalan. Buka link live — konfirmasi semua
+                halaman bisa diakses. Siswa yang melakukan semua langkah ini sendiri.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F5</span></td>
+            </tr>
+            <tr style="background: var(--surface)">
+              <td class="mono" style="color: var(--accent); white-space: nowrap">88–90 mnt</td>
+              <td><strong>PR &amp; Target S3</strong></td>
+              <td style="font-size: 13px">
+                <strong>PR konkret:</strong> "Isi konten nyata di minimal dua halaman — ganti semua teks placeholder
+                dengan informasi yang sebenarnya. Commit setelah selesai." Target Sesi 3: konten lengkap, tampilan rapi
+                di mobile.
+              </td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- SESI 3 -->
+        <div class="phase o">Sesi 3 · Polish &amp; Responsive</div>
+        <div class="card" style="margin-bottom: 0.25rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">90 menit</span>
+            <h3 style="margin: 0">Konten Lengkap → Mobile-Friendly → Tampilan Rapi</h3>
+          </div>
+          <p>
+            <strong>Goal akhir sesi:</strong> Website sudah berisi konten nyata, tampil baik di mobile, dan visual sudah
+            sesuai keinginan siswa.
+          </p>
+        </div>
+
+        <table style="margin-bottom: 1.5rem">
+          <thead>
+            <tr>
+              <th style="width: 120px">Waktu</th>
+              <th style="width: 180px">Kegiatan</th>
+              <th>Detail &amp; Cara Mengajar</th>
+              <th style="width: 100px">Fondasi/Lanjutan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">0–10 mnt</td>
+              <td><strong>Review PR</strong></td>
+              <td style="font-size: 13px">
+                Buka link live. Lihat konten yang sudah diisi siswa. Beri feedback singkat: apa yang sudah bagus, apa
+                yang perlu diperbaiki hari ini. Bangun rasa percaya diri — ini karya nyata mereka.
+              </td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">10–20 mnt</td>
+              <td><strong>Micro-lesson: Modifikasi Output AI</strong></td>
+              <td style="font-size: 13px">
+                Tunjukkan cara baca output Antigravity — bukan untuk menulis dari nol, tapi untuk tahu "bagian mana yang
+                perlu diubah." Contoh konkret: cara ubah warna, ukuran font, jarak antar elemen via prompt ("ubah warna
+                tombol jadi biru navy, jangan ubah yang lain"). Kenalkan DevTools Inspect untuk eksperimen CSS — klik
+                kanan → Inspect → ubah langsung di browser.
+              </td>
+              <td><span class="badge bw" style="font-size: 10px">L1 (parsial)</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">20–68 mnt</td>
+              <td><strong>Polish Session</strong></td>
+              <td style="font-size: 13px">
+                Siswa perbaiki visual sesuai catatan dari Sesi 2. Prioritas: (1) responsif di mobile — test di DevTools
+                Device Mode, prompt perbaikan kalau ada yang rusak; (2) tipografi dan warna — siswa bisa express
+                preferensi estetik mereka lewat prompt; (3) konten final — ganti semua placeholder yang tersisa. Commit
+                setiap perubahan signifikan.
+              </td>
+              <td><span class="badge bw" style="font-size: 10px">L1</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">68–80 mnt</td>
+              <td><strong>Systems Thinking Organik</strong></td>
+              <td style="font-size: 13px">
+                Di titik ini siswa biasanya mulai nanya "kenapa ini begini?" atau "bisa gak kalau…" — ini momen yang
+                tepat untuk masuk ke F2 secara organik. Jelaskan pakai analogi: "website kamu ini seperti rumah — ada
+                halaman depan, ruangan dalam, pintu (navigasi). Kode yang AI buat adalah temboknya. Kamu adalah
+                arsiteknya." Tidak perlu latihan formal — ngobrol sambil melihat kode mereka sendiri.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F2 (organik)</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">80–88 mnt</td>
+              <td><strong>Commit + Push + Review Final</strong></td>
+              <td style="font-size: 13px">
+                Commit semua. Push. Tunggu deploy. Buka link live di device nyata (HP siswa) — bukan hanya DevTools. Ini
+                pengalaman berbeda dan lebih impactful.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">F5</span></td>
+            </tr>
+            <tr style="background: var(--surface)">
+              <td class="mono" style="color: var(--accent); white-space: nowrap">88–90 mnt</td>
+              <td><strong>PR &amp; Target S4</strong></td>
+              <td style="font-size: 13px">
+                <strong>PR konkret:</strong> "Buka websitemu di HP, catat 3 hal yang masih mengganggu atau kurang. Tulis
+                di dokumen bersama — ini yang kita selesaikan di Sesi 4." Target Sesi 4: semua catatan itu beres,
+                website siap dipresentasikan, siswa bisa update mandiri.
+              </td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- SESI 4 -->
+        <div class="phase o">Sesi 4 · Final Polish + Launch + Serah Terima</div>
+        <div class="card" style="margin-bottom: 0.25rem">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap">
+            <span class="badge bo">90 menit</span>
+            <h3 style="margin: 0">Final Fix → Demo → Mandiri</h3>
+          </div>
+          <p>
+            <strong>Goal akhir sesi:</strong> Website live dan final. Siswa bisa presentasikan karyanya, dan tahu cara
+            update mandiri tanpa bantuan mentor.
+          </p>
+        </div>
+
+        <table style="margin-bottom: 1.5rem">
+          <thead>
+            <tr>
+              <th style="width: 120px">Waktu</th>
+              <th style="width: 180px">Kegiatan</th>
+              <th>Detail &amp; Cara Mengajar</th>
+              <th style="width: 100px">Fokus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">0–15 mnt</td>
+              <td><strong>Demo oleh Siswa</strong></td>
+              <td style="font-size: 13px">
+                Siswa presentasikan websitenya ke mentor — ceritakan halaman per halaman: "ini halaman utama, fungsinya
+                untuk…, ini navigasi ke…". Mentor hanya mendengarkan dan bertanya. Ini bukan evaluasi — ini latihan
+                ownership. Catatan perbaikan dari PR sesi 3 ditinjau bersama: mana yang dikerjakan, mana yang belum.
+              </td>
+              <td><span class="badge bg" style="font-size: 10px">Ownership</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">15–50 mnt</td>
+              <td><strong>Final Fix</strong></td>
+              <td style="font-size: 13px">
+                Selesaikan semua catatan dari PR sesi 3. Prioritas: error yang masih ada → konten yang belum lengkap →
+                visual yang masih janggal. Kalau waktu masih sisa setelah semua beres: siswa boleh tambah satu hal yang
+                mereka inginkan sejak awal tapi belum sempat.
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">Build</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">50–70 mnt</td>
+              <td><strong>Skenario Maintenance</strong></td>
+              <td style="font-size: 13px">
+                Ini bagian terpenting Sesi 4. Mentor minta perubahan nyata: "coba ganti foto di halaman utama, tambahkan
+                nomor WhatsApp di halaman kontak." Siswa lakukan sendiri: prompt di Antigravity → commit di GitHub
+                Desktop → push → tunggu auto-deploy → buka link live, konfirmasi perubahan terlihat. Ulangi satu kali
+                lagi dengan perubahan berbeda. Tujuan: membangun muscle memory alur update mandiri.
+              </td>
+              <td><span class="badge bp" style="font-size: 10px">Kemandirian</span></td>
+            </tr>
+            <tr>
+              <td class="mono" style="color: var(--accent); white-space: nowrap">70–83 mnt</td>
+              <td><strong>Panduan Maintenance</strong></td>
+              <td style="font-size: 13px">
+                Tulis bersama "Panduan Update Website" satu halaman di Notion/Google Docs — siswa yang mengetik, mentor
+                yang membimbing. Isi: link Vercel dashboard, link repo GitHub, alur update (prompt → commit → push),
+                cara cek kalau ada error. Ini dokumen yang akan mereka buka sendiri 3 bulan lagi.
+              </td>
+              <td><span class="badge bp" style="font-size: 10px">Kemandirian</span></td>
+            </tr>
+            <tr style="background: var(--surface)">
+              <td class="mono" style="color: var(--accent); white-space: nowrap">83–90 mnt</td>
+              <td><strong>Wrap-up &amp; Penutup</strong></td>
+              <td style="font-size: 13px">
+                Commit final. Push. Rayakan — website ini nyata dan live. Diskusikan: fitur apa yang mungkin ingin
+                ditambahkan mandiri? Kalau siswa tertarik lanjut ke sesi berikutnya (misal: tambah form kontak, animasi,
+                atau halaman baru), ini saat yang tepat untuk set ekspektasi scope sesi lanjutan.
+              </td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- FONDASI MAPPING -->
+        <hr class="div" />
+        <h3>Peta Integrasi Fondasi: Kapan &amp; Bagaimana Diajarkan</h3>
+        <p>
+          Tabel ini menunjukkan bagaimana setiap materi fondasi (F1–F7) diintegrasikan ke dalam sesi build, bukan
+          diajarkan terpisah.
+        </p>
+
+        <table style="margin-bottom: 1.5rem">
+          <thead>
+            <tr>
+              <th>Fondasi</th>
+              <th>Cara Diajarkan</th>
+              <th>Di Sesi</th>
+              <th>Durasi Efektif</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>F1 · Problem Discovery</strong></td>
+              <td style="font-size: 13px">
+                Review Problem Brief bersama, scope down ke website statis, susun PRD mini
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">S1</span></td>
+              <td style="font-size: 13px">10 mnt (bukan 45–60)</td>
+            </tr>
+            <tr>
+              <td><strong>F2 · Computational Thinking</strong></td>
+              <td style="font-size: 13px">
+                Muncul organik saat siswa nanya "kenapa ini begini?" — jawab dengan analogi, bukan kuliah
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">S3</span></td>
+              <td style="font-size: 13px">~10 mnt, organik</td>
+            </tr>
+            <tr>
+              <td><strong>F3 · Prompt Engineering</strong></td>
+              <td style="font-size: 13px">
+                Template prompt diajarkan saat siswa mau tulis prompt pertama. Diperdalam di S2 lewat contoh nyata
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">S1 + S2</span></td>
+              <td style="font-size: 13px">5+10 mnt = 15 mnt total</td>
+            </tr>
+            <tr>
+              <td><strong>F4 · PRD &amp; Wireframing</strong></td>
+              <td style="font-size: 13px">
+                PRD mini dan wireframe kertas dikerjakan langsung di awal S1 — bukan sesi tersendiri
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">S1</span></td>
+              <td style="font-size: 13px">15 mnt (gabung F1)</td>
+            </tr>
+            <tr>
+              <td><strong>F5 · Version Control</strong></td>
+              <td style="font-size: 13px">
+                Repo dibuat dan commit pertama dilakukan langsung setelah halaman pertama jadi — bukan modul terpisah
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">S1–S4</span></td>
+              <td style="font-size: 13px">10 mnt S1, ritual di tiap sesi</td>
+            </tr>
+            <tr>
+              <td><strong>F6 · Tool Orientation</strong></td>
+              <td style="font-size: 13px">
+                Demo tools dilakukan sebelum siswa mulai build — tonton dulu 5 menit, baru coba sendiri
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">S1</span></td>
+              <td style="font-size: 13px">10 mnt (bukan 30–45)</td>
+            </tr>
+            <tr>
+              <td><strong>F7 · Evaluasi AI Output</strong></td>
+              <td style="font-size: 13px">
+                Jadi ritual tiap sesi: "sebelum kita pakai ini, apa yang perlu kita cek?" — diajarkan sekali, diulang
+                setiap sesi
+              </td>
+              <td><span class="badge bo" style="font-size: 10px">S1–S4</span></td>
+              <td style="font-size: 13px">Terintegrasi, tidak ada slot khusus</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- MATERI LANJUTAN YANG RELEVAN -->
+        <h3>Materi Lanjutan yang Relevan untuk Website Statis</h3>
+        <div class="card-grid">
+          <div class="card c-g">
+            <span class="badge bg" style="margin-bottom: 0.5rem; display: inline-block">Perlu</span>
+            <h3>L1 · UI &amp; Struktur (Parsial)</h3>
+            <p style="font-size: 13px">
+              Hanya bagian "cara baca dan modifikasi output AI" — bukan teori HTML/CSS lengkap. Diajarkan di Sesi 3
+              sebagai micro-lesson 10 menit.
+            </p>
+          </div>
+          <div class="card c-g">
+            <span class="badge bg" style="margin-bottom: 0.5rem; display: inline-block">Perlu</span>
+            <h3>L4d · Deploy &amp; Maintenance</h3>
+            <p style="font-size: 13px">
+              Wajib dan sudah terintegrasi ke setiap sesi via alur commit → push → auto-deploy. Sesi 4 fokus membangun
+              muscle memory-nya.
+            </p>
+          </div>
+          <div class="card" style="border-left: 3px solid var(--border); opacity: 0.65">
+            <span class="badge bw" style="margin-bottom: 0.5rem; display: inline-block">Skip</span>
+            <h3>L2 · Database (Supabase)</h3>
+            <p style="font-size: 13px">
+              Tidak dibutuhkan untuk website statis. Relevan kalau siswa lanjut ke sesi berikutnya dengan fitur form
+              atau data persisten.
+            </p>
+          </div>
+          <div class="card" style="border-left: 3px solid var(--border); opacity: 0.65">
+            <span class="badge bw" style="margin-bottom: 0.5rem; display: inline-block">Skip</span>
+            <h3>L3 · Auth · L4a Upload · L4b API</h3>
+            <p style="font-size: 13px">
+              Semua fitur ini di luar scope website statis. Masukkan ke wish list jika siswa tertarik lanjut.
+            </p>
+          </div>
+        </div>
+
+        <!-- CHECKLIST KELULUSAN -->
+        <hr class="div" />
+        <h3>Checklist: Siswa Siap Lulus Jalur 4 Sesi</h3>
+        <div class="card c-g">
+          <ul class="lst chk">
+            <li>Website live dan bisa diakses via link Vercel yang nyata</li>
+            <li>Semua halaman dari PRD ada dan bisa dinavigasi</li>
+            <li>Konten sudah diisi dengan informasi yang sebenarnya (bukan placeholder)</li>
+            <li>Tampil baik di mobile (test di HP sendiri)</li>
+            <li>Repo GitHub ada dengan minimal 5 commit bermakna</li>
+            <li>Bisa lakukan update mandiri: prompt → commit → push → lihat hasilnya live</li>
+            <li>Punya dokumen "Panduan Update Website" yang ditulis sendiri</li>
+            <li>Bisa jelaskan cara kerja websitenya ke orang lain dalam bahasa awam</li>
+          </ul>
+        </div>
+
+        <div class="note" style="margin-top: 1.5rem">
+          <h4>Jika ada waktu tersisa di Sesi 4</h4>
+          <p style="font-size: 13.5px">
+            Gunakan untuk: (1) tambah fitur kecil yang siswa inginkan dari awal — membangun rasa kepemilikan; (2)
+            brainstorm apa yang bisa dikembangkan mandiri setelah kursus; (3) dokumentasi tambahan. Jangan buru-buru
+            pindah ke materi baru — kedalaman lebih baik dari lebar.
+          </p>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════
+       SECTION 5 · STRATEGI MENTORING
+  ════════════════════════════════════════ -->
+      <section id="mentoring">
+        <h2>Strategi Mentoring</h2>
+
+        <h3>Prinsip Inti: "Guide, Not Do"</h3>
+        <div class="card">
+          <p>
+            Mentor yang terlalu sering mengambil alih keyboard atau langsung memberikan jawaban adalah mentor yang
+            membuat siswanya tidak bisa mandiri. Setiap kali kamu mengetik untuk siswa, kamu mencuri kesempatan belajar
+            dari mereka.
+          </p>
+          <div class="flex" style="margin-top: 1rem">
+            <div>
+              <h4 style="color: #c0392b">Yang dihindari</h4>
+              <ul class="lst">
+                <li>"Sini biar saya yang ketik"</li>
+                <li>Memberikan solusi sebelum siswa mencoba sendiri</li>
+                <li>Menjelaskan panjang sebelum siswa pernah mencoba</li>
+                <li>Memperbaiki error tanpa melibatkan siswa dalam prosesnya</li>
+                <li>Membuat prompt debug untuk siswa</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="color: var(--accent2)">Yang dilakukan</h4>
+              <ul class="lst chk">
+                <li>"Coba deskripsikan error ini ke AI pakai kata-katamu sendiri dulu"</li>
+                <li>"Menurutmu, kenapa bagian ini tidak berjalan?"</li>
+                <li>"Kalau kamu mau minta AI tambahkan fitur ini, promptnya gimana?"</li>
+                <li>"Bagus. Sekarang coba jelaskan ke saya apa yang baru saja dibuat"</li>
+                <li>"Sebelum kita pakai output ini, apa yang perlu kita cek dulu?"</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 1.5rem">Cara Menjalankan Debug Session yang Efektif</h3>
+        <div class="card">
+          <p>
+            Debug adalah momen belajar terbaik — jangan tergesa-gesa menyelesaikannya. Ajarkan prosesnya sampai siswa
+            bisa lakukan mandiri.
+          </p>
+          <div class="tl" style="margin-top: 1rem">
+            <div class="tl-item">
+              <div class="tl-dot f"></div>
+              <h4>Step 1 — Baca Dulu</h4>
+              <p style="font-size: 13px">
+                Minta siswa baca error message keras-keras. "Apa yang dibilang error ini?" Biasakan membaca sebelum
+                panik dan langsung minta bantuan.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <h4>Step 2 — Lokasi</h4>
+              <p style="font-size: 13px">
+                Error di file mana, baris berapa? Di browser console atau terminal? Tunjukkan cara navigate ke lokasi
+                sumber masalah.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot g"></div>
+              <h4>Step 3 — Formulasikan ke AI</h4>
+              <p style="font-size: 13px">
+                Siswa yang tulis prompt debug-nya: "Ini errornya [paste lengkap]. Ini kodenya [paste]. Ini yang saya
+                coba lakukan [deskripsi]. Apa yang salah?" Jangan mentor yang menuliskan ini.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot b"></div>
+              <h4>Step 4 — Evaluasi Solusi</h4>
+              <p style="font-size: 13px">
+                Baca solusi AI bersama. Tanyakan: "Masuk akal tidak? Kenapa ini menjadi solusinya?" Pahami dulu sebelum
+                copy-paste.
+              </p>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot fg"></div>
+              <h4>Step 5 — Implement &amp; Verify</h4>
+              <p style="font-size: 13px">
+                Terapkan, test ulang. Jika masih error, ulangi dari Step 1 dengan informasi baru yang sudah didapat.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 1.5rem">Pendekatan Per Tipe Siswa</h3>
+        <div class="card-grid">
+          <div class="card c-o">
+            <h3>Mudah Frustrasi</h3>
+            <ul class="lst dot">
+              <li>Pecah task jadi lebih kecil — pastikan ada "win" tiap 15–20 menit</li>
+              <li>Celebrate progress sekecil apapun — "tombol itu berjalan? bagus!"</li>
+              <li>Ingatkan secara eksplisit: error itu normal, bukan tanda tidak berbakat</li>
+              <li>Akhiri sesi dengan sesuatu yang bisa dilihat dan berfungsi</li>
+            </ul>
+          </div>
+          <div class="card c-g">
+            <h3>Terlalu Ambisius</h3>
+            <ul class="lst dot">
+              <li>Scope creep adalah risiko utama — tetapkan PRD sejak awal dan pegang teguh</li>
+              <li>"Fitur itu bagus, kita catat di wish list, selesaikan Must Have dulu"</li>
+              <li>Gunakan MoSCoW setiap kali ada permintaan fitur baru</li>
+              <li>Ingatkan: satu fitur berjalan sempurna lebih baik dari lima yang setengah jalan</li>
+            </ul>
+          </div>
+          <div class="card c-b">
+            <h3>Pasif / Tidak Proaktif</h3>
+            <ul class="lst dot">
+              <li>
+                PR yang konkret dan terukur — bukan "lanjutkan yang tadi" tapi "tambahkan komponen X sampai bisa diklik"
+              </li>
+              <li>Gali motivasi di balik project — kenapa ini penting bagi mereka?</li>
+              <li>Libatkan dalam keputusan desain: "mau pakai warna apa? layout mana yang lebih cocok?"</li>
+            </ul>
+          </div>
+          <div class="card c-p">
+            <h3>Sudah Punya Background IT</h3>
+            <ul class="lst dot">
+              <li>Sesuaikan kecepatan — tidak perlu menjelaskan hal yang sudah mereka tahu</li>
+              <li>Fokus pada produktivitas: bagaimana AI mempercepat workflow yang sudah ada</li>
+              <li>Diskusikan trade-off dan best practice, tidak hanya "cara pakainya"</li>
+              <li>Beri ruang eksplorasi mandiri lebih banyak</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 1.5rem">Pendekatan per Segmen Usia &amp; Latar Belakang</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Segmen</th>
+              <th>Karakteristik Umum</th>
+              <th>Pendekatan yang Efektif</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge bo">SMP</span></td>
+              <td style="font-size: 13px">
+                Rasa ingin tahu tinggi, rentang perhatian pendek. Belum punya masalah "nyata" yang spesifik. Sangat
+                dipengaruhi ekspresi kreatif.
+              </td>
+              <td style="font-size: 13px">
+                Project yang visual dan fun: fan page, kuis online, game sederhana. Sesi harus bergerak cepat dengan
+                variasi. Libatkan orang tua dalam penentuan project dan evaluasi progres.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="badge bb">SMA</span></td>
+              <td style="font-size: 13px">
+                Mulai punya ambisi dan masalah nyata. Ingin terlihat capable di depan teman. Termotivasi oleh pengakuan
+                sosial.
+              </td>
+              <td style="font-size: 13px">
+                Project yang bisa dipamerkan: portfolio, website komunitas, tools untuk kegiatan sekolah/ekskul. Dorong
+                untuk share hasil di media sosial — eksposur memberi motivasi ekstra.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="badge bg">Mahasiswa</span></td>
+              <td style="font-size: 13px">
+                Paling siap secara teknis. Punya masalah nyata dari akademik atau organisasi. Waktu lebih fleksibel,
+                motivasi tinggi.
+              </td>
+              <td style="font-size: 13px">
+                Project yang berkaitan dengan studi atau career: portofolio, tools riset, aplikasi untuk UKM/organisasi.
+                Bisa push ke project lebih kompleks dengan confidence.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="badge bw">Profesional / Umum</span></td>
+              <td style="font-size: 13px">
+                Waktu sangat terbatas, ROI-oriented, motivasi tinggi. Ingin solusi konkret untuk pekerjaan sehari-hari.
+              </td>
+              <td style="font-size: 13px">
+                Project langsung relevan dengan pekerjaan. Minimal teori, maksimal solusi. Jadwal paling fleksibel.
+                Prioritaskan kecepatan delivery atas kelengkapan materi.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ═══════════════════════════════════════
+       SECTION 6 · TECH STACK
+  ════════════════════════════════════════ -->
+      <section id="tools">
+        <h2>Tech Stack &amp; Tools</h2>
+
+        <div class="card-grid">
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem">
+              <span class="badge bo">Build</span>
+              <h3 style="margin: 0">Antigravity</h3>
+            </div>
+            <p style="font-size: 13px">
+              Tools utama vibe coding — generate, iterate, dan preview aplikasi dari prompt. Semua sesi build
+              berlangsung di sini.
+            </p>
+            <ul class="lst dot" style="margin-top: 0.75rem">
+              <li>Demo di sesi pertama: build halaman dari nol dalam 5 menit</li>
+              <li>Cara attach kode eksisting sebagai konteks saat iterasi</li>
+              <li>Cara export / sync kode ke GitHub dari Antigravity</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem">
+              <span class="badge bw">Version Control</span>
+              <h3 style="margin: 0">GitHub</h3>
+            </div>
+            <p style="font-size: 13px">
+              Penyimpanan kode dan version control. Wajib setup di sesi pertama. Pakai GitHub Desktop untuk siswa
+              non-teknis.
+            </p>
+            <ul class="lst dot" style="margin-top: 0.75rem">
+              <li>Buat repository di sesi pertama — ritual wajib</li>
+              <li>Commit setiap akhir sesi minimal, setiap fitur selesai idealnya</li>
+              <li>Commit message deskriptif: "add contact form" bukan "update"</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem">
+              <span class="badge bg">Database</span>
+              <h3 style="margin: 0">Supabase</h3>
+            </div>
+            <p style="font-size: 13px">
+              Database PostgreSQL dengan UI ramah pemula. Free tier sangat cukup untuk semua project kursus. Auth sudah
+              built-in.
+            </p>
+            <ul class="lst dot" style="margin-top: 0.75rem">
+              <li>Setup di sesi pertama untuk project dengan database</li>
+              <li>Tunjukkan Table Editor — ini yang membuat siswa "ngerti" database</li>
+              <li>URL dan anon key disimpan di .env — tidak pernah di kode yang di-commit</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem">
+              <span class="badge bp">Deploy</span>
+              <h3 style="margin: 0">Vercel / Netlify</h3>
+            </div>
+            <p style="font-size: 13px">
+              Publish ke internet gratis. Connect GitHub — otomatis deploy tiap push. Vercel untuk Next.js, Netlify
+              untuk Vite/React biasa.
+            </p>
+            <ul class="lst dot" style="margin-top: 0.75rem">
+              <li>Deploy pertama kali di Milestone M2 — sesegera mungkin</li>
+              <li>Setup environment variables untuk Supabase keys</li>
+              <li>Preview deployments: setiap branch dapat URL tersendiri</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 1.5rem">Tools Opsional Berdasarkan Kebutuhan Project</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Kapan Dipakai</th>
+              <th>Alternatif</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ImageKit / Cloudinary</strong></td>
+              <td style="font-size: 13px">Project butuh upload &amp; hosting gambar (foto profil, produk, galeri)</td>
+              <td style="font-size: 13px">Supabase Storage untuk project skala kecil</td>
+            </tr>
+            <tr>
+              <td><strong>Excalidraw</strong></td>
+              <td style="font-size: 13px">Wireframing dan diagram sistem di sesi awal</td>
+              <td style="font-size: 13px">Kertas dan pensil — sama efektifnya</td>
+            </tr>
+            <tr>
+              <td><strong>Claude / ChatGPT</strong></td>
+              <td style="font-size: 13px">Explain kode, bantu tulis PRD, brainstorm fitur, debug pendukung</td>
+              <td style="font-size: 13px">Bisa dipakai paralel dengan Antigravity</td>
+            </tr>
+            <tr>
+              <td><strong>Notion / Google Docs</strong></td>
+              <td style="font-size: 13px">Progress log, catatan sesi, wishlist fitur, PR antara sesi</td>
+              <td style="font-size: 13px">WhatsApp notes jika lebih praktis untuk siswa</td>
+            </tr>
+            <tr>
+              <td><strong>GitHub Desktop</strong></td>
+              <td style="font-size: 13px">Version control dengan UI visual untuk siswa non-teknis</td>
+              <td style="font-size: 13px">CLI git untuk yang sudah familiar terminal</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ═══════════════════════════════════════
+       SECTION 7 · INTAKE
+  ════════════════════════════════════════ -->
+      <section id="intake">
+        <h2>Proses Intake &amp; Onboarding</h2>
+
+        <div class="note g">
+          <h4>Mengapa intake adalah investasi terpenting</h4>
+          <p>
+            Intake yang dilakukan dengan baik menentukan 80% keberhasilan kursus. Di sinilah kamu menentukan apakah
+            project siswa realistis, set ekspektasi yang jujur, dan membangun kepercayaan awal. Tawarkan gratis atau
+            harga nominal — ini bukan sesi berbayar, ini proses seleksi dan perencanaan bersama.
+          </p>
+        </div>
+
+        <h3>Alur Sesi Intake (30 Menit)</h3>
+        <div class="tl">
+          <div class="tl-item">
+            <div class="tl-dot f"></div>
+            <h4>0–5 mnt · Perkenalan Singkat</h4>
+            <p style="font-size: 13px">
+              Ceritakan kursus ini dalam 3 kalimat: bukan kursus coding biasa, berbasis project nyata, tujuannya
+              kemandirian digital. Langsung ke intinya.
+            </p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <h4>5–15 mnt · Eksplorasi Masalah</h4>
+            <p style="font-size: 13px">
+              Tanyakan: "Masalah apa yang paling sering kamu hadapi di keseharian atau pekerjaan yang kamu rasa bisa
+              diselesaikan dengan aplikasi?" Biarkan mereka bercerita tanpa dipotong. Ini yang menentukan seluruh arah
+              kursus.
+            </p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot g"></div>
+            <h4>15–22 mnt · Scope &amp; Ekspektasi</h4>
+            <p style="font-size: 13px">
+              Berdasarkan masalah yang diceritakan: apakah realistis? Estimasi kasar berapa sesi. Jelaskan apa yang akan
+              dan tidak akan dihasilkan. Lebih baik underpromise dari awal.
+            </p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot b"></div>
+            <h4>22–28 mnt · Logistik</h4>
+            <p style="font-size: 13px">
+              Format (online/offline/hybrid), frekuensi sesi, harga dan metode pembayaran, dan persiapan teknis yang
+              dibutuhkan. Konfirmasi perangkat siswa memadai.
+            </p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot fg"></div>
+            <h4>28–30 mnt · Next Step</h4>
+            <p style="font-size: 13px">
+              Jika cocok: sepakati tanggal sesi pertama, kirim checklist onboarding, dan minta siswa mulai menulis
+              Problem Brief sebelum S1.
+            </p>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 1.5rem">Checklist Persiapan Siswa (Dikirim Sebelum Sesi Pertama)</h3>
+        <div class="card">
+          <ul class="lst chk">
+            <li>Buat akun Google (jika belum ada)</li>
+            <li>Daftar akun GitHub di github.com</li>
+            <li>Install GitHub Desktop (unduh di desktop.github.com)</li>
+            <li>Daftar akun Antigravity</li>
+            <li>Laptop dengan browser Chrome atau Edge versi terbaru</li>
+            <li>Koneksi internet stabil, minimal 5 Mbps untuk sesi online</li>
+            <li>
+              <strong>Tulis Problem Brief:</strong> satu paragraf tentang masalah yang ingin diselesaikan — kirimkan
+              sebelum sesi pertama
+            </li>
+          </ul>
+        </div>
+
+        <h3 style="margin-top: 1.5rem">Tanda Peringatan di Sesi Intake</h3>
+        <div class="card-grid">
+          <div class="card" style="border-left: 3px solid #e74c3c">
+            <h3 style="color: #c0392b">Project Terlalu Luas</h3>
+            <p style="font-size: 13px">
+              Ingin buat "marketplace seperti Tokopedia" atau "aplikasi seperti Instagram". Scope down dulu ke MVP
+              terkecil yang tetap berguna dan nyata.
+            </p>
+          </div>
+          <div class="card" style="border-left: 3px solid #e74c3c">
+            <h3 style="color: #c0392b">Ekspektasi Tidak Realistis</h3>
+            <p style="font-size: 13px">
+              Pikir semua fitur bisa selesai dalam 2–3 sesi. Set ekspektasi jelas di awal: kompleksitas = waktu. Sesi
+              tambahan bisa selalu ditambahkan.
+            </p>
+          </div>
+          <div class="card" style="border-left: 3px solid #e74c3c">
+            <h3 style="color: #c0392b">Tidak Ada Problem Nyata</h3>
+            <p style="font-size: 13px">
+              Ingin belajar "just to know" tanpa project konkret. Tingkat drop-off lebih tinggi. Bantu temukan masalah
+              nyata dulu sebelum setuju mulai kursus.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════
+       SECTION 8 · TIPS MENTOR
+  ════════════════════════════════════════ -->
+      <section id="tips">
+        <h2>Tips Operasional Mentor</h2>
+
+        <h3>Manajemen Progres Antara Sesi</h3>
+        <div class="card">
+          <ul class="lst">
+            <li>
+              Di akhir setiap sesi, catat 1–2 PR konkret di dokumen bersama. <strong>Siswa yang menulisnya</strong> —
+              bukan mentor yang mendiktekan. Ini bentuk ownership.
+            </li>
+            <li>
+              Kirim pesan singkat (WhatsApp/DM) 2 hari sebelum sesi berikutnya: "Gimana progress PR-nya? Ada yang
+              stuck?" — bukan untuk ngecek, tapi untuk membuka percakapan.
+            </li>
+            <li>
+              Jika PR tidak dikerjakan: jangan langsung lanjut. Tanyakan kenapa, identifikasi hambatannya, perbaiki
+              hambatan itu dulu.
+            </li>
+            <li>
+              Buat "progress log" singkat bersama — dokumentasi satu kalimat tiap sesi: "Sesi 3: form input selesai,
+              data tersimpan ke Supabase." Ini memotivasi siswa melihat perkembangannya.
+            </li>
+          </ul>
+        </div>
+
+        <h3 style="margin-top: 1.5rem">Cara Handle Sesi yang Tidak Produktif</h3>
+        <div class="card">
+          <ul class="lst">
+            <li>
+              <strong>Debug panjang itu belajar, bukan pemborosan waktu.</strong> Siswa yang berhasil debug sendiri akan
+              jauh lebih confident dari yang diberi solusi langsung.
+            </li>
+            <li>
+              Jika stuck lebih dari 20 menit pada satu masalah: pertimbangkan ganti pendekatan atau sederhanakan scope,
+              bukan terus paksa solusi yang sama.
+            </li>
+            <li>
+              Jika progress hari ini sangat sedikit: akui dengan jujur, dan rencanakan sesi berikutnya dengan target
+              yang lebih realistis.
+            </li>
+            <li>
+              Jangan extend sesi tanpa kesepakatan — menghormati waktu siswa juga membangun profesionalisme kamu sebagai
+              mentor.
+            </li>
+          </ul>
+        </div>
+
+        <h3 style="margin-top: 1.5rem">Tanda Siswa Sudah Siap Mandiri</h3>
+        <div class="card c-g">
+          <ul class="lst chk">
+            <li>Bisa mendeskripsikan masalah atau fitur baru ke AI tanpa bantuan mentor</li>
+            <li>Tahu cara membaca error di browser console dan bisa formulasikan debug prompt sendiri</li>
+            <li>Bisa tambah fitur kecil ke project yang sudah ada secara mandiri antara sesi</li>
+            <li>Aplikasinya live di internet dan berfungsi sesuai tujuan awal</li>
+            <li>Bisa jelaskan cara kerja aplikasinya ke orang lain dalam bahasa awam</li>
+            <li>Tidak panik menghadapi error — tahu proses yang harus dilakukan</li>
+            <li>Bisa membuat PRD sederhana untuk project berikutnya secara mandiri</li>
+          </ul>
+        </div>
+
+        <h3 style="margin-top: 1.5rem">Beberapa Hal yang Perlu Kamu Tahu sebagai Mentor Baru</h3>
+        <div class="card-grid">
+          <div class="card-sm">
+            <h4>Kamu Tidak Harus Tahu Segalanya</h4>
+            <p style="font-size: 13px">
+              Jika ada yang kamu tidak tahu, katakan jujur — lalu cari tahu bersama siswa menggunakan AI. Ini justru
+              mengajarkan cara kerja yang sebenarnya.
+            </p>
+          </div>
+          <div class="card-sm">
+            <h4>Konsistensi Lebih Penting dari Kesempurnaan</h4>
+            <p style="font-size: 13px">
+              Lebih baik sesi yang "cukup baik" tapi konsisten, daripada sesi yang "sempurna" tapi jarang. Bangun ritme
+              bersama siswa.
+            </p>
+          </div>
+          <div class="card-sm">
+            <h4>Minta Feedback Aktif</h4>
+            <p style="font-size: 13px">
+              Di akhir tiap 3–4 sesi, tanyakan: "Ada yang bisa saya lakukan berbeda untuk membantumu lebih baik?" Ini
+              meningkatkan kualitas kursus dan membangun kepercayaan.
+            </p>
+          </div>
+          <div class="card-sm">
+            <h4>Testimoni &amp; Portofolio</h4>
+            <p style="font-size: 13px">
+              Setiap project yang selesai adalah portofoliomu sebagai mentor. Minta izin tampilkan screenshot/link hasil
+              siswa — ini marketing terbaik untuk kursus private.
+            </p>
+          </div>
+        </div>
+
+        <hr class="div" />
+        <div class="note g">
+          <h4>Pengingat utama</h4>
+          <p>
+            Kamu tidak mengajar coding. Kamu mengajar cara berpikir, cara berkomunikasi dengan AI, dan cara membangun
+            sesuatu yang nyata dari nol. Ukuran keberhasilan kursus ini bukan seberapa banyak materi yang tersampaikan —
+            tapi apakah siswa berhasil menyelesaikan sesuatu yang berguna untuk hidupnya, dan apakah mereka bisa
+            melanjutkan sendiri setelah kursus selesai.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const secs = document.querySelectorAll("section[id]");
+      const links = document.querySelectorAll('nav a[href^="#"]');
+      window.addEventListener("scroll", () => {
+        let cur = "";
+        secs.forEach((s) => {
+          if (window.scrollY >= s.offsetTop - 80) cur = s.id;
+        });
+        links.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + cur));
+      });
+      links.forEach((a) =>
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          const t = document.querySelector(a.getAttribute("href"));
+          if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+        }),
+      );
+    </script>
+  </body>
+</html>

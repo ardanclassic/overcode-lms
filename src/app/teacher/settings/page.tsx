@@ -8,6 +8,8 @@ import { Settings, Copy, CheckCircle2, ShieldAlert, Key, User, BookOpen } from "
 import { cn } from "@/lib/utils";
 import { AvatarPicker } from "@/components/shared/AvatarPicker";
 import { useAuthStore } from "@/store/useAuthStore";
+import { profileService } from "@/services/profile.service";
+import { useEffect } from "react";
 
 export default function TeacherSettingsPage() {
   const [activeTab, setActiveTab] = useState<"profile" | "class">("profile");
@@ -17,10 +19,41 @@ export default function TeacherSettingsPage() {
   const [copied, setCopied] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
-  // Mock teacher ID and initial avatar
-  const MOCK_TEACHER_ID = "teacher-77889";
-  const [avatarUrl, setAvatarUrl] = useState(`https://api.dicebear.com/7.x/notionists/svg?seed=${MOCK_TEACHER_ID}`);
+  const user = useAuthStore((state) => state.user);
+  const updateUser = useAuthStore((state) => state.updateUser);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    gender: "male",
+    phone: "",
+    bio: "",
+  });
+
+  const [avatarUrl, setAvatarUrl] = useState("");
+
+  useEffect(() => {
+    async function loadProfile() {
+      if (!user) return;
+      try {
+        const profile = await profileService.getProfile(user.id);
+        if (profile) {
+          setAvatarUrl(profile.avatar_url || `https://api.dicebear.com/7.x/notionists/svg?seed=${user.id}`);
+          setFormData({
+            fullName: profile.full_name || "",
+            gender: profile.gender || "male",
+            phone: profile.phone || "",
+            bio: profile.bio || "",
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadProfile();
+  }, [user]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(enrollmentCode);
@@ -28,21 +61,37 @@ export default function TeacherSettingsPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const updateUser = useAuthStore((state) => state.updateUser);
-
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+
     setIsSaving(true);
-    
-    updateUser({ avatar: avatarUrl });
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSaving(false);
+    try {
+      await profileService.updateProfile(user.id, {
+        full_name: formData.fullName,
+        gender: formData.gender as "male" | "female",
+        phone: formData.phone,
+        bio: formData.bio,
+        avatar_url: avatarUrl
+      });
+      updateUser({ avatar: avatarUrl, name: formData.fullName });
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 3000);
-    }, 1000);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menyimpan profil.");
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading || !user) {
+    return (
+      <div className="flex justify-center p-12">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
@@ -80,7 +129,7 @@ export default function TeacherSettingsPage() {
             <AvatarPicker 
               currentAvatarUrl={avatarUrl}
               role="teacher"
-              userId={MOCK_TEACHER_ID}
+              userId={user.id}
               onAvatarChange={setAvatarUrl}
             />
 
@@ -91,22 +140,35 @@ export default function TeacherSettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700">Nama Lengkap</label>
-                <input type="text" defaultValue="Andy Prasetyo" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                <input 
+                  type="text" 
+                  value={formData.fullName}
+                  onChange={e => setFormData({...formData, fullName: e.target.value})}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700">Jenis Kelamin</label>
-                <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                <select 
+                  value={formData.gender}
+                  onChange={e => setFormData({...formData, gender: e.target.value})}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                >
                   <option value="male">Laki-laki</option>
                   <option value="female">Perempuan</option>
                 </select>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-slate-700">Nomor WhatsApp</label>
-                <input type="tel" defaultValue="081299887766" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                <input type="email" value={user.email} disabled className="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 cursor-not-allowed" />
               </div>
               <div className="md:col-span-2 space-y-2">
                 <label className="text-sm font-bold text-slate-700">Bio Singkat / Tagline</label>
-                <input type="text" placeholder="Cth: Senior Frontend Developer at TechCorp" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                <textarea 
+                  value={formData.bio}
+                  onChange={e => setFormData({...formData, bio: e.target.value})}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all h-24 resize-none"
+                />
                 <p className="text-xs text-slate-500">Bio ini akan tampil di profil publik Anda yang dilihat oleh murid.</p>
               </div>
               <div className="md:col-span-2 space-y-2">

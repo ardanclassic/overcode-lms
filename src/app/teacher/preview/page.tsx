@@ -20,7 +20,8 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { DUMMY_COURSE_ITEMS, buildCourseTree, CourseNode, ItemType, getItemPath, CourseItem } from "@/lib/dummyData";
+import { useAuthStore } from "@/store/useAuthStore";
+import { courseService, CourseItem, ItemType } from "@/services/course.service";
 
 const getTypeIcon = (type: ItemType) => {
   switch (type) {
@@ -43,7 +44,7 @@ const PrepModeRecursiveNode = ({
   expandedNodes,
   toggleNode,
 }: {
-  node: CourseNode;
+  node: CourseItem;
   level?: number;
   expandedNodes: Record<string, boolean>;
   toggleNode: (id: string, currentState: boolean) => void;
@@ -86,15 +87,7 @@ const PrepModeRecursiveNode = ({
                 {node.title}
               </span>
               <span className="text-xs font-medium text-slate-500 flex items-center gap-2">
-                {node.children.length} item(s)
-                {node.scheduledAt && (
-                  <>
-                    <span className="w-1 h-1 rounded-full bg-slate-300" />
-                    <span className="text-amber-600 font-medium flex items-center gap-1">
-                      <CalendarCheck size={12} /> {new Date(node.scheduledAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </>
-                )}
+                {node.children?.length || 0} item(s)
               </span>
             </div>
           </div>
@@ -117,7 +110,7 @@ const PrepModeRecursiveNode = ({
               level === 0 ? "ml-4 sm:ml-9 pl-4 sm:pl-8 pt-4 pb-2" : "ml-4 sm:ml-6 pl-4 sm:pl-8 pt-2",
             )}
           >
-            {node.children.map((child) => (
+            {(node.children || []).map((child) => (
               <PrepModeRecursiveNode
                 key={child.id}
                 node={child}
@@ -132,19 +125,14 @@ const PrepModeRecursiveNode = ({
     );
   }
 
-  // Not a folder (Content item)
-  // PREP MODE: ALL items are unlocked and clickable!
   return (
     <Link id={`node-${node.id}`} href={`/teacher/course/${node.id}`} className="block w-full outline-none group relative scroll-mt-24">
-      {/* Decorative timeline dot - hidden on mobile for cleaner look */}
       <div className="absolute -left-[23px] sm:-left-[39px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border-2 border-white bg-slate-200 group-hover:bg-primary group-hover:scale-125 transition-all z-10 hidden sm:block" />
-
       <div className="py-2.5 px-3 rounded-xl flex items-center justify-between gap-3 transition-all duration-200 hover:bg-slate-50">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors shadow-sm bg-white text-primary border border-slate-200 group-hover:border-primary/30">
             {getTypeIcon(node.item_type)}
           </div>
-
           <div className="flex flex-col min-w-0">
             <span className="font-semibold text-sm sm:text-base truncate transition-colors text-slate-700 group-hover:text-primary">
               {node.title}
@@ -162,9 +150,7 @@ const PrepModeRecursiveNode = ({
             </div>
           </div>
         </div>
-
         <div className="shrink-0 flex items-center pl-2 gap-2">
-           {/* Playbook Button */}
            <Button 
              variant="secondary"
              size="sm"
@@ -197,7 +183,6 @@ function PrepModeSkeleton() {
         <div className="h-8 w-48 bg-slate-200 rounded-lg" />
         <div className="h-5 w-3/4 max-w-lg bg-slate-200 rounded-md" />
       </div>
-
       <div className="space-y-4">
         <div className="h-7 w-64 bg-slate-200 rounded-lg mb-2" />
         {[1, 2, 3].map((i) => (
@@ -215,39 +200,36 @@ function PrepModeSkeleton() {
 }
 
 export default function PrepModePage() {
-  const [isLoading, setIsLoading] = useState(true);
+  const user = useAuthStore(state => state.user);
+  const [courseTree, setCourseTree] = useState<CourseItem[]>([]);
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
-  
-  const [courseTreeData] = useState(buildCourseTree(DUMMY_COURSE_ITEMS));
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      
-      if (typeof window !== 'undefined') {
-        const params = new URLSearchParams(window.location.search);
-        const openId = params.get('open');
-        if (openId) {
-          const path = getItemPath(openId);
-          if (path && path.length > 0) {
-            const newExpanded: Record<string, boolean> = {};
-            path.forEach(p => {
-              newExpanded[p.id] = true;
-            });
-            setExpandedNodes(prev => ({ ...prev, ...newExpanded }));
-            
-            setTimeout(() => {
-              const el = document.getElementById(`node-${openId}`);
-              if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }
-            }, 300);
-          }
+    async function loadData() {
+      if (!user) return;
+      try {
+        const courses = await courseService.getTeacherCourses(user.id);
+        if (courses && courses.length > 0) {
+          const tree = await courseService.getCourseTree(courses[0].id);
+          setCourseTree(tree);
+          
+          const initialExpanded: Record<string, boolean> = {};
+          tree.forEach(node => {
+            initialExpanded[node.id] = true;
+          });
+          setExpandedNodes(initialExpanded);
+        } else {
+          setCourseTree([]);
         }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
       }
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    }
+    loadData();
+  }, [user]);
 
   const toggleNode = (id: string, currentState: boolean) => {
     setExpandedNodes((prev) => ({ ...prev, [id]: !currentState }));
@@ -277,7 +259,7 @@ export default function PrepModePage() {
           </h3>
         </FadeIn>
 
-        {courseTreeData.map((node, index) => (
+        {courseTree.map((node, index) => (
           <FadeIn key={node.id} delay={(index + 2) * 0.1}>
             <PrepModeRecursiveNode 
               node={node} 

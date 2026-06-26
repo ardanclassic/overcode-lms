@@ -7,10 +7,12 @@ import { useProgressStore } from "@/store/useProgressStore";
 import { CheckCircle2, Lock, PlayCircle, BookOpen, ImageIcon, Presentation, FileQuestion, ChevronRight, Folder, FolderOpen, FileText, CalendarCheck, Video } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { buildCourseTree, DUMMY_COURSE_ITEMS, getAllContents, getItemPath, ItemType, CourseNode, CourseItem } from "@/lib/dummyData";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
+import { courseService, CourseItem, ItemType } from "@/services/course.service";
+import { scheduleService, LiveSession } from "@/services/schedule.service";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const getTypeIcon = (type: ItemType) => {
   switch (type) {
@@ -34,16 +36,18 @@ const getTypeLabel = (type: ItemType) => {
   }
 };
 
-const RecursiveNode = ({ node, level = 0, unlockedSessions, allContents, expandedNodes, toggleNode }: {
-  node: CourseNode, 
+const RecursiveNode = ({ node, level = 0, unlockedSessions, allContents, expandedNodes, toggleNode, liveSessions }: {
+  node: CourseItem, 
   level?: number, 
   unlockedSessions: string[], 
   allContents: CourseItem[], 
   expandedNodes: Record<string, boolean>, 
-  toggleNode: (id: string, currentState: boolean) => void
+  toggleNode: (id: string, currentState: boolean) => void,
+  liveSessions: Record<string, LiveSession>
 }) => {
   const isFolder = node.item_type === "folder";
   const isExpanded = expandedNodes[node.id] ?? (level === 0);
+  const session = liveSessions[node.id];
 
   if (isFolder) {
     return (
@@ -75,18 +79,18 @@ const RecursiveNode = ({ node, level = 0, unlockedSessions, allContents, expande
                 "truncate transition-colors",
                 level === 0 ? "text-base sm:text-lg font-bold text-slate-800" : "text-sm sm:text-base font-semibold text-slate-700 group-hover:text-slate-900"
               )}>{node.title}</span>
-              {node.scheduledAt && (
+              {session?.started_at && (
                 <span className="text-amber-600 font-medium flex items-center gap-1 text-[10px] sm:text-xs mt-0.5">
-                  <CalendarCheck size={12} /> {new Date(node.scheduledAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  <CalendarCheck size={12} /> {new Date(session.started_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                 </span>
               )}
             </div>
           </button>
           
-          {node.meetingUrl && (
+          {session?.meeting_url && (
             <div className="shrink-0 pl-3">
               <a 
-                href={node.meetingUrl} 
+                href={session.meeting_url} 
                 target="_blank" 
                 rel="noopener noreferrer" 
               >
@@ -118,7 +122,7 @@ const RecursiveNode = ({ node, level = 0, unlockedSessions, allContents, expande
                 "flex flex-col",
                 level === 0 ? "pl-1 sm:pl-3 mt-2" : "pl-6 mt-1 border-l-2 border-slate-200 ml-[17px] space-y-0.5"
               )}>
-                {node.children.map((child) => (
+                {(node.children || []).map((child) => (
                   <RecursiveNode 
                     key={child.id} 
                     node={child} 
@@ -127,9 +131,10 @@ const RecursiveNode = ({ node, level = 0, unlockedSessions, allContents, expande
                     allContents={allContents}
                     expandedNodes={expandedNodes}
                     toggleNode={toggleNode}
+                    liveSessions={liveSessions}
                   />
                 ))}
-                {node.children.length === 0 && (
+                {(!node.children || node.children.length === 0) && (
                   <p className="text-xs text-muted-foreground italic py-3 pl-6">Folder ini kosong.</p>
                 )}
               </div>
@@ -279,13 +284,14 @@ function StudentDashboardSkeleton() {
 
 export default function StudentDashboard() {
   const { unlockedSessions, isEnrolled } = useProgressStore();
+  const user = useAuthStore(state => state.user);
+  
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   
-  // Ambil semua data file non-folder untuk kalkulasi progress
-  const allContents = getAllContents();
-  // Bangun hirarki Tree
-  const courseTree = buildCourseTree(DUMMY_COURSE_ITEMS);
+  const [allContents, setAllContents] = useState<CourseItem[]>([]);
+  const [courseTree, setCourseTree] = useState<CourseItem[]>([]);
+  const [liveSessions, setLiveSessions] = useState<Record<string, LiveSession>>({});
   
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({});
 
@@ -295,36 +301,61 @@ export default function StudentDashboard() {
       return;
     }
     
-    // Simulate network fetch for 1.2 seconds
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      
-      // Setelah loading selesai, jalankan logika auto-scroll url
-      if (typeof window !== 'undefined') {
+    async function loadData() {
+      try {
         const params = new URLSearchParams(window.location.search);
+        // hardcode first course for now since we don't have course fetching by ID from student yet
+        // ideally we get courseId from router params
+        const courseIdToFetch = "e4a2c918-be48-4389-9d51-143924f7e52a"; // this is just a placeholder, we use the first available course instead
+        
+        let tree: CourseItem[] = [];
+        
+        // Since we are mocking the courseId for now due to database structure, let's fetch any available course
+        const courses = await courseService.getTeacherCourses("d4b29b4e-86fa-4966-9b5a-73db6355fcad"); // mock teacher id, normally we get from enrollment
+        
+        // Let's just fetch all course items and filter if needed.
+        const supabase = (await import("@/lib/supabase/client")).createClient();
+        const { data: courseItems } = await supabase.from('course_items').select('*').order('order_index', { ascending: true });
+        
+        if (courseItems && courseItems.length > 0) {
+           tree = courseService.buildTree(courseItems);
+           setCourseTree(tree);
+           setAllContents(courseItems.filter((item: any) => item.item_type !== 'folder'));
+           
+           // Fetch live sessions
+           const itemIds = courseItems.map((i: any) => i.id);
+           const sessions = await scheduleService.getLiveSessions(itemIds);
+           const sessionMap: Record<string, LiveSession> = {};
+           sessions.forEach(s => {
+             if (s.course_item_id) sessionMap[s.course_item_id] = s;
+           });
+           setLiveSessions(sessionMap);
+        }
+
+        // Auto-scroll logic
         const openId = params.get('open');
         if (openId) {
-          const path = getItemPath(openId);
-          if (path && path.length > 0) {
-            const newExpanded: Record<string, boolean> = {};
-            path.forEach(p => {
-              newExpanded[p.id] = true;
-            });
-            setExpandedNodes(prev => ({ ...prev, ...newExpanded }));
-            
-            setTimeout(() => {
-              const el = document.getElementById(`node-${openId}`);
-              if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }
-            }, 300);
-          }
+           const newExpanded: Record<string, boolean> = {};
+           newExpanded[openId] = true; // simplifying for now
+           setExpandedNodes(prev => ({ ...prev, ...newExpanded }));
+           
+           setTimeout(() => {
+             const el = document.getElementById(`node-${openId}`);
+             if (el) {
+               el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+             }
+           }, 300);
         }
-      }
-    }, 1200);
 
-    return () => clearTimeout(timer);
-  }, []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    loadData();
+  }, [isEnrolled, router]);
 
   const toggleNode = (id: string, currentState: boolean) => {
     setExpandedNodes(prev => ({ ...prev, [id]: !currentState }));
@@ -397,6 +428,7 @@ export default function StudentDashboard() {
               allContents={allContents} 
               expandedNodes={expandedNodes}
               toggleNode={toggleNode}
+              liveSessions={liveSessions}
             />
           </FadeIn>
         ))}

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --color-background: var(--background);
@@ -82,17 +83,35 @@
 
   /* --- Premium Scrollbar --- */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background-color: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+    background-color: rgba(148, 163, 184, 0.5); /* slate-400 */
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(100, 116, 139, 0.9); /* slate-500 */
+  }
+  @media (prefers-color-scheme: dark) {
+    ::-webkit-scrollbar-track {
+      background-color: #030712; /* gray-950 */
+    }
+    ::-webkit-scrollbar-corner {
+      background-color: #030712; /* gray-950 */
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(71, 85, 105, 0.6); /* slate-600 */
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(100, 116, 139, 0.9); /* slate-500 */
+    }
   }
   ::-webkit-scrollbar-corner {
-    background: transparent;
+    background-color: transparent;
   }
 
   /* --- Neon Effects --- */

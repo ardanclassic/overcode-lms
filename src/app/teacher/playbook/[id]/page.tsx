@@ -15,19 +15,10 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
-import { getAllContents, getItemPath } from "@/lib/dummyData";
 import { cn } from "@/lib/utils";
-
-// Mock Data for Initial State
-const INITIAL_CHECKLIST = [
-  { id: "1", text: "Buka file source code starter di VS Code", isCompleted: true },
-  { id: "2", text: "Pastikan live server berjalan di port 5500", isCompleted: false },
-  { id: "3", text: "Siapkan tautan absensi untuk siswa", isCompleted: false },
-];
-
-const INITIAL_TALKING_POINTS = `* Tekankan bahwa **HTML bukan bahasa pemrograman**, melainkan markup language.
-* Ingatkan siswa untuk menginstal ekstensi **Prettier** di VS Code.
-* **Titik Kritis:** Siswa sering bingung bedanya tag penutup dan pembuka. Beri analogi kotak/kardus yang membungkus barang.`;
+import { playbookService, TeacherNotes } from "@/services/playbook.service";
+import { courseService, CourseItem } from "@/services/course.service";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function DedicatedPlaybookPage() {
   const params = useParams();
@@ -35,24 +26,39 @@ export default function DedicatedPlaybookPage() {
   const contentId = params.id as string;
   const [isLoading, setIsLoading] = useState(true);
 
+  const user = useAuthStore(state => state.user);
+  
   // States
-  const [checklist, setChecklist] = useState(INITIAL_CHECKLIST);
+  const [checklist, setChecklist] = useState<{ id: string; text: string; checked: boolean }[]>([]);
   const [newTask, setNewTask] = useState("");
-  const [talkingPoints, setTalkingPoints] = useState(INITIAL_TALKING_POINTS);
+  const [talkingPoints, setTalkingPoints] = useState("");
   const [scratchpad, setScratchpad] = useState("");
+  
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-
-  const allContents = getAllContents();
-  const content = allContents.find((c) => c.id === contentId);
-  const breadcrumbPath = contentId ? getItemPath(contentId) : [];
+  const [content, setContent] = useState<CourseItem | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 600);
-    return () => clearTimeout(timer);
-  }, []);
+    async function loadData() {
+      if (!user) return;
+      try {
+        const item = await courseService.getCourseItem(contentId);
+        setContent(item);
+
+        const notes = await playbookService.getTeacherNotes(user.id, contentId);
+        if (notes) {
+          setChecklist(notes.preparation_checklist || []);
+          setTalkingPoints(notes.talking_points || "");
+          setScratchpad(notes.private_scratchpad || "");
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, [user, contentId]);
 
   if (isLoading) {
     return (
@@ -74,20 +80,32 @@ export default function DedicatedPlaybookPage() {
     );
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (!user) return;
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
+    try {
+      await playbookService.upsertTeacherNotes({
+        teacher_id: user.id,
+        course_item_id: contentId,
+        preparation_checklist: checklist,
+        talking_points: talkingPoints,
+        private_scratchpad: scratchpad,
+      });
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
-    }, 800);
+    } catch (error) {
+      console.error(error);
+      alert("Gagal menyimpan catatan");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const addTask = () => {
     if (!newTask.trim()) return;
     setChecklist([
       ...checklist,
-      { id: Date.now().toString(), text: newTask, isCompleted: false },
+      { id: Date.now().toString(), text: newTask, checked: false },
     ]);
     setNewTask("");
   };
@@ -99,7 +117,7 @@ export default function DedicatedPlaybookPage() {
   const toggleTask = (id: string) => {
     setChecklist(
       checklist.map((item) =>
-        item.id === id ? { ...item, isCompleted: !item.isCompleted } : item
+        item.id === id ? { ...item, checked: !item.checked } : item
       )
     );
   };
@@ -112,26 +130,9 @@ export default function DedicatedPlaybookPage() {
             <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-400 mb-1.5">
               <Link href="/teacher/preview" className="hover:text-amber-600 transition-colors">Daftar Materi</Link>
               <span>/</span>
-              {breadcrumbPath.map((item, index) => (
-                <div key={item.id} className="flex items-center gap-1.5">
-                  {index < breadcrumbPath.length - 1 ? (
-                    <>
-                      <Link 
-                        href={`/teacher/preview?open=${item.id}`}
-                        className="hover:text-amber-600 transition-colors truncate max-w-[120px] sm:max-w-[180px]"
-                        title={item.title}
-                      >
-                        {item.title}
-                      </Link>
-                      <span>/</span>
-                    </>
-                  ) : (
-                    <span className="text-amber-600 truncate max-w-[150px] sm:max-w-[200px]" title={item.title}>
-                      {item.title}
-                    </span>
-                  )}
-                </div>
-              ))}
+              <span className="font-semibold text-slate-800 truncate max-w-[200px] sm:max-w-[400px]">
+                {content.title}
+              </span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold text-slate-800 leading-tight">
               Playbook: {content.title}
@@ -239,7 +240,7 @@ export default function DedicatedPlaybookPage() {
                       Checklist Persiapan
                     </h2>
                     <p className="text-sm text-emerald-700/70">
-                      {checklist.filter((i) => i.isCompleted).length} dari{" "}
+                      {checklist.filter((i) => i.checked).length} dari{" "}
                       {checklist.length} selesai
                     </p>
                   </div>
@@ -255,14 +256,14 @@ export default function DedicatedPlaybookPage() {
                       >
                         <input
                           type="checkbox"
-                          checked={task.isCompleted}
+                          checked={task.checked}
                           onChange={() => toggleTask(task.id)}
                           className="mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                         />
                         <span
                           className={cn(
                             "text-sm flex-1 cursor-pointer transition-all",
-                            task.isCompleted
+                            task.checked
                               ? "text-slate-400 line-through"
                               : "text-slate-700 font-medium"
                           )}

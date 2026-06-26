@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { FadeIn } from "@/components/shared/FadeIn";
 import { Button } from "@/components/ui/Button";
-import { Search, Filter, CheckCircle2, XCircle, AlertCircle, Clock, X, FileText, Send, Star } from "lucide-react";
+import { Search, Filter, CheckCircle2, XCircle, AlertCircle, Clock, X, FileText, Send, Star, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/useAuthStore";
 
 // Types
 type FpStatus = "passed" | "review" | "working" | "not_started";
@@ -336,7 +337,8 @@ const StudentDetailPanel = ({
 
 export default function StudentManagementPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [students, setStudents] = useState<Student[]>(INITIAL_STUDENTS);
+  const [students, setStudents] = useState<Student[]>([]);
+  const user = useAuthStore(state => state.user);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -352,9 +354,20 @@ export default function StudentManagementPage() {
     (selectedBatch !== "All" ? 1 : 0) + (selectedFpStatus !== "All" ? 1 : 0) + (selectedAge !== "All" ? 1 : 0);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!user) return;
+    const fetchStudents = async () => {
+      try {
+        const { teacherService } = await import("@/services/teacher.service");
+        const data = await teacherService.getStudents(user.id);
+        setStudents(data);
+      } catch (err) {
+        console.error("Failed to fetch students", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchStudents();
+  }, [user]);
 
   const handleUpdateFpStatus = (id: string, newStatus: FpStatus, score: number | null = null) => {
     setStudents((prev) => prev.map((s) => (s.id === id ? { ...s, fpStatus: newStatus, score: score ?? s.score } : s)));
@@ -408,37 +421,48 @@ export default function StudentManagementPage() {
         </Button>
       </div>
 
-      <FadeIn className="glass-card p-6 rounded-3xl border border-slate-200/60 shadow-sm bg-white/50">
-        <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 mb-6">
-          <div className="flex flex-wrap w-full gap-3">
-            {/* Search */}
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input
-                type="text"
-                placeholder="Cari nama siswa..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
-              />
-            </div>
-
-            {/* Filter Button */}
-            <Button
-              onClick={() => setIsFilterModalOpen(true)}
-              variant="ghost"
-              className="bg-white border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
-            >
-              <Filter size={16} className="mr-2" />
-              Filter
-              {activeFilterCount > 0 && (
-                <span className="ml-2 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-white text-[10px] font-bold">
-                  {activeFilterCount}
-                </span>
-              )}
-            </Button>
+      {students.length === 0 ? (
+        <FadeIn className="glass-card p-12 rounded-3xl border border-slate-200/60 shadow-sm bg-white/50 flex flex-col items-center justify-center text-center">
+          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+            <Users className="text-slate-400" size={32} />
           </div>
-        </div>
+          <h2 className="text-xl font-bold text-slate-700 mb-2">Belum Ada Murid</h2>
+          <p className="text-slate-500 max-w-sm">
+            Anda belum memiliki murid yang terdaftar di kelas Anda. Bagikan kode pendaftaran kelas kepada murid Anda agar mereka dapat bergabung.
+          </p>
+        </FadeIn>
+      ) : (
+        <FadeIn className="glass-card p-6 rounded-3xl border border-slate-200/60 shadow-sm bg-white/50">
+          <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 mb-6">
+            <div className="flex flex-wrap w-full gap-3">
+              {/* Search */}
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <input
+                  type="text"
+                  placeholder="Cari nama siswa..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm font-medium"
+                />
+              </div>
+
+              {/* Filter Button */}
+              <Button
+                onClick={() => setIsFilterModalOpen(true)}
+                variant="ghost"
+                className="bg-white border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                <Filter size={16} className="mr-2" />
+                Filter
+                {activeFilterCount > 0 && (
+                  <span className="ml-2 flex items-center justify-center w-5 h-5 rounded-full bg-primary text-white text-[10px] font-bold">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </Button>
+            </div>
+          </div>
 
         <div className="overflow-x-auto -mx-6 px-6 sm:mx-0 sm:px-0">
           <table className="w-full text-left border-collapse min-w-[900px]">
@@ -539,6 +563,7 @@ export default function StudentManagementPage() {
           </table>
         </div>
       </FadeIn>
+      )}
 
       {/* Render Slide-over Panel */}
       <StudentDetailPanel

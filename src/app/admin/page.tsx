@@ -7,6 +7,8 @@ import { DollarSign, UserCheck, Activity, Search, BookOpen, Link as LinkIcon, Pl
 import { Modal } from "@/components/ui/Modal";
 import { cn } from "@/lib/utils";
 
+import { adminService } from "@/services/admin.service";
+
 function AdminDashboardSkeleton() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto animate-pulse">
@@ -39,57 +41,74 @@ function AdminDashboardSkeleton() {
           <div className="h-16 w-full bg-slate-100 rounded" />
         </div>
       </div>
-
-
     </div>
   );
 }
 
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("study_fields"); // Changed default to Study Fields for easy testing
+  const [activeTab, setActiveTab] = useState("study_fields"); 
 
-  // Study Fields Mock State
-  const [studyFields, setStudyFields] = useState([
-    { id: "sf1", title: "Vibe Coding (Web Based)", teachersCount: 2, studentsCount: 45 },
-    { id: "sf2", title: "Scratch (for Kids)", teachersCount: 1, studentsCount: 30 },
-    { id: "sf3", title: "English for Business", teachersCount: 3, studentsCount: 120 },
-  ]);
+  const [stats, setStats] = useState({ totalRevenue: 0, activeStudents: 0, activeClasses: 0, totalFields: 0 });
+  const [studyFields, setStudyFields] = useState<any[]>([]);
   const [copiedTokenId, setCopiedTokenId] = useState<string | null>(null);
-
-  const [topUpRequests, setTopUpRequests] = useState([
-    { id: "tu1", teacher: "Andy Santoso", date: "12 Jun 2026", nominal: "Rp 100.000", token: "+10 Token", status: "Pending" },
-    { id: "tu2", teacher: "Budi Doremi", date: "12 Jun 2026", nominal: "Rp 250.000", token: "+28 Token", status: "Pending" },
-    { id: "tu3", teacher: "Siti Rahma", date: "11 Jun 2026", nominal: "Rp 50.000", token: "+5 Token", status: "Pending" },
-  ]);
+  const [topUpRequests, setTopUpRequests] = useState<any[]>([]);
+  const [vouchers, setVouchers] = useState<any[]>([]);
   const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
-
   const [isNewFieldModalOpen, setIsNewFieldModalOpen] = useState(false);
   const [isNewVoucherModalOpen, setIsNewVoucherModalOpen] = useState(false);
+  const [students, setStudents] = useState<any[]>([]);
 
-  const [students, setStudents] = useState([
-    { id: "s1", name: "Rina Sari", email: "rina@example.com", joined: "10 Jun 2026", activeClasses: 2, status: "Active" },
-    { id: "s2", name: "Bagus Pratama", email: "bagus@example.com", joined: "11 Jun 2026", activeClasses: 1, status: "Active" },
-    { id: "s3", name: "Ciko Jeriko", email: "ciko@example.com", joined: "09 Jun 2026", activeClasses: 3, status: "Suspended" },
-  ]);
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
-  const handleApproveTopUp = (id: string) => {
-    setTopUpRequests(prev => prev.map(req => req.id === id ? { ...req, status: "Approved" } : req));
-  };
-  const handleRejectTopUp = () => {
-    if (rejectConfirmId) {
-      setTopUpRequests(prev => prev.map(req => req.id === rejectConfirmId ? { ...req, status: "Rejected" } : req));
-      setRejectConfirmId(null);
+  const fetchDashboardData = async () => {
+    setIsLoading(true);
+    try {
+      const [globalStats, fields, requests, vouchersData, studentsData] = await Promise.all([
+        adminService.getGlobalStats(),
+        adminService.getStudyFields(),
+        adminService.getTopUpRequests(),
+        adminService.getVouchers(),
+        adminService.getStudents()
+      ]);
+      setStats(globalStats);
+      setStudyFields(fields);
+      setTopUpRequests(requests);
+      setVouchers(vouchersData);
+      setStudents(studentsData);
+    } catch (error) {
+      console.error("Error fetching admin data:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleApproveTopUp = async (id: string) => {
+    try {
+      await adminService.updateTopUpStatus(id, 'approved');
+      fetchDashboardData(); // Refresh to update revenue and status
+    } catch (e) {
+      console.error("Failed to approve top up", e);
+    }
+  };
 
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+  const handleRejectTopUp = async () => {
+    if (rejectConfirmId) {
+      try {
+        await adminService.updateTopUpStatus(rejectConfirmId, 'rejected');
+        fetchDashboardData();
+      } catch (e) {
+        console.error("Failed to reject top up", e);
+      } finally {
+        setRejectConfirmId(null);
+      }
+    }
+  };
 
   const generateInviteLink = (fieldId: string) => {
+    // We will generate a mock token for now until teacher_invitations table is integrated
     const mockToken = "inv-" + Math.random().toString(36).substring(2, 9);
     const link = `${window.location.origin}/register-teacher?token=${mockToken}&field=${fieldId}`;
     navigator.clipboard.writeText(link);
@@ -106,10 +125,10 @@ export default function AdminDashboard() {
       {/* Global Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { title: "Total Revenue", value: "Rp 15.000.000", icon: DollarSign, color: "text-green-600 bg-green-100" },
-          { title: "Active Students", value: "142", icon: UserCheck, color: "text-blue-600 bg-blue-100" },
-          { title: "Active Classes", value: "12", icon: Activity, color: "text-primary bg-primary/20" },
-          { title: "Study Fields", value: "3", icon: BookOpen, color: "text-purple-600 bg-purple-100" },
+          { title: "Total Revenue", value: `Rp ${stats.totalRevenue.toLocaleString('id-ID')}`, icon: DollarSign, color: "text-green-600 bg-green-100" },
+          { title: "Active Students", value: stats.activeStudents, icon: UserCheck, color: "text-blue-600 bg-blue-100" },
+          { title: "Active Classes", value: stats.activeClasses, icon: Activity, color: "text-primary bg-primary/20" },
+          { title: "Study Fields", value: stats.totalFields, icon: BookOpen, color: "text-purple-600 bg-purple-100" },
         ].map((stat, i) => (
           <FadeIn key={i} delay={i * 0.1} className="glass-card p-5 rounded-2xl flex items-center gap-4">
             <div className={`p-3 rounded-lg ${stat.color}`}>
@@ -285,16 +304,28 @@ export default function AdminDashboard() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-            <div className="border border-slate-200 rounded-xl p-5 bg-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">AKTIF</div>
-              <h4 className="font-mono text-xl font-black text-slate-800 mb-1">HARIGURU26</h4>
-              <p className="text-sm font-semibold text-primary mb-4">Bonus Top-Up +50%</p>
-              <p className="text-xs text-slate-500">Berlaku s/d 30 Jun 2026</p>
-              <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
-                <span className="text-xs font-medium text-slate-600">Digunakan: 24 kali</span>
-                <Button variant="secondary" size="sm">Nonaktifkan</Button>
+            {vouchers.length === 0 ? (
+              <div className="col-span-full py-12 text-center text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                Belum ada voucher promosi.
               </div>
-            </div>
+            ) : vouchers.map(voucher => (
+              <div key={voucher.id} className="border border-slate-200 rounded-xl p-5 bg-white relative overflow-hidden group">
+                {voucher.is_active && <div className="absolute top-0 right-0 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">AKTIF</div>}
+                {!voucher.is_active && <div className="absolute top-0 right-0 bg-slate-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">NONAKTIF</div>}
+                
+                <h4 className="font-mono text-xl font-black text-slate-800 mb-1">{voucher.code}</h4>
+                <p className="text-sm font-semibold text-primary mb-4">Bonus Top-Up +{voucher.bonus_percentage}%</p>
+                <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
+                  <span className="text-xs font-medium text-slate-600">Digunakan: {voucher.usage_count || 0} kali</span>
+                  {voucher.is_active && (
+                    <Button variant="secondary" size="sm" onClick={async () => {
+                      await adminService.deactivateVoucher(voucher.id);
+                      fetchDashboardData();
+                    }}>Nonaktifkan</Button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </FadeIn>
       )}
@@ -365,12 +396,17 @@ export default function AdminDashboard() {
 
       {/* New Study Field Modal */}
       <Modal isOpen={isNewFieldModalOpen} onClose={() => setIsNewFieldModalOpen(false)} title="Bidang Studi Baru">
-        <form onSubmit={(e) => {
+        <form onSubmit={async (e) => {
           e.preventDefault();
           const formData = new FormData(e.target as HTMLFormElement);
           const title = formData.get("title") as string;
-          setStudyFields([...studyFields, { id: `sf${Date.now()}`, title, teachersCount: 0, studentsCount: 0 }]);
-          setIsNewFieldModalOpen(false);
+          try {
+            await adminService.createStudyField(title);
+            fetchDashboardData();
+            setIsNewFieldModalOpen(false);
+          } catch (err) {
+            console.error("Failed to create study field", err);
+          }
         }} className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-500 uppercase">Nama Bidang Studi</label>
@@ -385,9 +421,18 @@ export default function AdminDashboard() {
 
       {/* New Voucher Modal */}
       <Modal isOpen={isNewVoucherModalOpen} onClose={() => setIsNewVoucherModalOpen(false)} title="Voucher Promo Baru">
-        <form onSubmit={(e) => {
+        <form onSubmit={async (e) => {
           e.preventDefault();
-          setIsNewVoucherModalOpen(false);
+          const formData = new FormData(e.target as HTMLFormElement);
+          const code = formData.get("code") as string;
+          const bonus = parseInt(formData.get("bonus") as string);
+          try {
+            await adminService.createVoucher(code, bonus);
+            fetchDashboardData();
+            setIsNewVoucherModalOpen(false);
+          } catch (err) {
+            console.error("Failed to create voucher", err);
+          }
         }} className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-500 uppercase">Kode Voucher</label>

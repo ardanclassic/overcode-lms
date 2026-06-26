@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import { BookOpen, LayoutDashboard, Settings, Users, LogOut, Calendar } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
@@ -17,6 +19,8 @@ interface SidebarProps {
 
 export function Sidebar({ className, onLinkClick, role = "student" }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const logout = useAuthStore((state) => state.logout);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const isEnrolled = useProgressStore((state) => state.isEnrolled);
 
@@ -38,9 +42,30 @@ export function Sidebar({ className, onLinkClick, role = "student" }: SidebarPro
     ],
   };
 
+  const [hasCourses, setHasCourses] = useState(false);
+
+  // Cek apakah guru sudah punya kelas untuk menampilkan menu preview & jadwal
+  useEffect(() => {
+    if (role === "teacher") {
+      const checkCourses = async () => {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data } = await supabase.from('courses').select('id').eq('owner_id', user.id).limit(1);
+          if (data && data.length > 0) setHasCourses(true);
+        }
+      };
+      checkCourses();
+    }
+  }, [role]);
+
   const currentLinks = links[role].filter((link) => {
     // Sembunyikan menu Learning Path jika murid belum mendaftar di kelas apapun
     if (role === "student" && link.href === "/student/course" && !isEnrolled) {
+      return false;
+    }
+    // Sembunyikan menu Preview Materi & Jadwal Sesi jika guru belum punya kelas
+    if (role === "teacher" && (link.href === "/teacher/preview" || link.href === "/teacher/schedule") && !hasCourses) {
       return false;
     }
     return true;
@@ -108,9 +133,10 @@ export function Sidebar({ className, onLinkClick, role = "student" }: SidebarPro
             <Button
               variant="danger"
               className="w-full sm:w-auto"
-              onClick={() => {
+              onClick={async () => {
                 setIsLogoutModalOpen(false);
-                // Handle actual logout logic here
+                await logout();
+                window.location.href = "/login";
               }}
             >
               Ya, Logout
