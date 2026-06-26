@@ -1,0 +1,213 @@
+{
+  "tree": [
+    {
+      "name": "01 - Kurikulum",
+      "type": "directory",
+      "path": "01%20-%20Kurikulum",
+      "slug": [
+        "01 - Kurikulum"
+      ],
+      "children": [
+        {
+          "name": "Kurikulum Builder Bootcamp",
+          "type": "file",
+          "path": "01%20-%20Kurikulum/Kurikulum%20Builder%20Bootcamp",
+          "slug": [
+            "01 - Kurikulum",
+            "Kurikulum Builder Bootcamp"
+          ]
+        },
+        {
+          "name": "Kurikulum Online",
+          "type": "file",
+          "path": "01%20-%20Kurikulum/Kurikulum%20Online",
+          "slug": [
+            "01 - Kurikulum",
+            "Kurikulum Online"
+          ]
+        },
+        {
+          "name": "Kurikulum Private",
+          "type": "file",
+          "path": "01%20-%20Kurikulum/Kurikulum%20Private",
+          "slug": [
+            "01 - Kurikulum",
+            "Kurikulum Private"
+          ]
+        },
+        {
+          "name": "Kurikulum Sekolah",
+          "type": "file",
+          "path": "01%20-%20Kurikulum/Kurikulum%20Sekolah",
+          "slug": [
+            "01 - Kurikulum",
+            "Kurikulum Sekolah"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Operations Playbook",
+      "type": "directory",
+      "path": "02%20-%20Operations%20Playbook",
+      "slug": [
+        "02 - Operations Playbook"
+      ],
+      "children": [
+        {
+          "name": "Operations Playbook (Online)",
+          "type": "file",
+          "path": "02%20-%20Operations%20Playbook/Operations%20Playbook%20(Online)",
+          "slug": [
+            "02 - Operations Playbook",
+            "Operations Playbook (Online)"
+          ]
+        },
+        {
+          "name": "Operations Playbook (Private)",
+          "type": "file",
+          "path": "02%20-%20Operations%20Playbook/Operations%20Playbook%20(Private)",
+          "slug": [
+            "02 - Operations Playbook",
+            "Operations Playbook (Private)"
+          ]
+        },
+        {
+          "name": "Operations Playbook (Sekolah)",
+          "type": "file",
+          "path": "02%20-%20Operations%20Playbook/Operations%20Playbook%20(Sekolah)",
+          "slug": [
+            "02 - Operations Playbook",
+            "Operations Playbook (Sekolah)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Proposal",
+      "type": "directory",
+      "path": "03%20-%20Proposal",
+      "slug": [
+        "03 - Proposal"
+      ],
+      "children": [
+        {
+          "name": "Proposal Sekolah",
+          "type": "file",
+          "path": "03%20-%20Proposal/Proposal%20Sekolah",
+          "slug": [
+            "03 - Proposal",
+            "Proposal Sekolah"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Referensi",
+      "type": "directory",
+      "path": "04%20-%20Referensi",
+      "slug": [
+        "04 - Referensi"
+      ],
+      "children": [
+        {
+          "name": "Concept Sheet",
+          "type": "file",
+          "path": "04%20-%20Referensi/Concept%20Sheet",
+          "slug": [
+            "04 - Referensi",
+            "Concept Sheet"
+          ]
+        },
+        {
+          "name": "Pricing Guide",
+          "type": "file",
+          "path": "04%20-%20Referensi/Pricing%20Guide",
+          "slug": [
+            "04 - Referensi",
+            "Pricing Guide"
+          ]
+        },
+        {
+          "name": "Problem Register",
+          "type": "file",
+          "path": "04%20-%20Referensi/Problem%20Register",
+          "slug": [
+            "04 - Referensi",
+            "Problem Register"
+          ]
+        },
+        {
+          "name": "Tools Comparison",
+          "type": "file",
+          "path": "04%20-%20Referensi/Tools%20Comparison",
+          "slug": [
+            "04 - Referensi",
+            "Tools Comparison"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Review_dan_Analisa_V2",
+      "type": "file",
+      "path": "Review_dan_Analisa_V2",
+      "slug": [
+        "Review_dan_Analisa_V2"
+      ]
+    }
+  ],
+  "slugs": [
+    [
+      "01 - Kurikulum",
+      "Kurikulum Builder Bootcamp"
+    ],
+    [
+      "01 - Kurikulum",
+      "Kurikulum Online"
+    ],
+    [
+      "01 - Kurikulum",
+      "Kurikulum Private"
+    ],
+    [
+      "01 - Kurikulum",
+      "Kurikulum Sekolah"
+    ],
+    [
+      "02 - Operations Playbook",
+      "Operations Playbook (Online)"
+    ],
+    [
+      "02 - Operations Playbook",
+      "Operations Playbook (Private)"
+    ],
+    [
+      "02 - Operations Playbook",
+      "Operations Playbook (Sekolah)"
+    ],
+    [
+      "03 - Proposal",
+      "Proposal Sekolah"
+    ],
+    [
+      "04 - Referensi",
+      "Concept Sheet"
+    ],
+    [
+      "04 - Referensi",
+      "Pricing Guide"
+    ],
+    [
+      "04 - Referensi",
+      "Problem Register"
+    ],
+    [
+      "04 - Referensi",
+      "Tools Comparison"
+    ],
+    [
+      "Review_dan_Analisa_V2"
+    ]
+  ]
+}

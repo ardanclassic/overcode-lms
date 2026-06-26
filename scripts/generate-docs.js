@@ -1,21 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 
-const DOCS_DIR = path.join(__dirname, '..', 'DOCS', 'v2');
+const DOCS_SOURCE = path.join(__dirname, '..', 'DOCS', 'v2');
+const DOCS_PUBLIC_DEST = path.join(__dirname, '..', 'public', 'docs');
 const TREE_OUTPUT = path.join(__dirname, '..', 'src', 'lib', 'docs-tree.json');
-const CONTENT_OUTPUT = path.join(__dirname, '..', 'src', 'lib', 'docs-contents.json');
 
-function getDocsTree(dir = DOCS_DIR, currentSlug = []) {
+function getDocsTree(dir = DOCS_SOURCE, currentSlug = []) {
   if (!fs.existsSync(dir)) return [];
-  
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   const nodes = [];
-
   for (const entry of entries) {
     if (entry.name.startsWith('.')) continue;
-
     const fullPath = path.join(dir, entry.name);
-    
     if (entry.isDirectory()) {
       const slug = [...currentSlug, entry.name];
       const children = getDocsTree(fullPath, slug);
@@ -28,12 +24,10 @@ function getDocsTree(dir = DOCS_DIR, currentSlug = []) {
       nodes.push({ name: nameWithoutExt, type: 'file', path: slug.map(encodeURIComponent).join('/'), slug });
     }
   }
-
   nodes.sort((a, b) => {
     if (a.type === b.type) return a.name.localeCompare(b.name);
     return a.type === 'directory' ? -1 : 1;
   });
-
   return nodes;
 }
 
@@ -49,26 +43,30 @@ function getAllDocSlugs(tree) {
   return slugs;
 }
 
-function getAllDocContents(slugs) {
-  const contents = {};
-  for (const slug of slugs) {
-    const relativePath = path.join(...slug) + '.md';
-    const fullPath = path.join(DOCS_DIR, relativePath);
-    if (fs.existsSync(fullPath)) {
-      contents[slug.join('/')] = fs.readFileSync(fullPath, 'utf8');
+function copyDocsToPublic(dir = DOCS_SOURCE, destDir = DOCS_PUBLIC_DEST) {
+  if (!fs.existsSync(dir)) return;
+  if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.name.startsWith('.')) continue;
+    const srcPath = path.join(dir, entry.name);
+    const destPath = path.join(destDir, entry.name);
+    if (entry.isDirectory()) {
+      copyDocsToPublic(srcPath, destPath);
+    } else if (entry.isFile() && entry.name.endsWith('.md')) {
+      fs.copyFileSync(srcPath, destPath);
     }
   }
-  return contents;
 }
 
+// 1. Build tree JSON (tiny, for sidebar at runtime)
 const tree = getDocsTree();
 const slugs = getAllDocSlugs(tree);
-const contents = getAllDocContents(slugs);
-
-// Write small tree file (used at runtime by the Worker for sidebar)
 fs.writeFileSync(TREE_OUTPUT, JSON.stringify({ tree, slugs }, null, 2), 'utf8');
-console.log(`✅ Generated docs-tree.json (${(Buffer.byteLength(JSON.stringify({ tree, slugs })) / 1024).toFixed(1)} KB) — for runtime sidebar`);
+console.log(`✅ Generated docs-tree.json (${(fs.statSync(TREE_OUTPUT).size / 1024).toFixed(1)} KB) — sidebar runtime data`);
 
-// Write full content file (used ONLY at build time for static page generation)
-fs.writeFileSync(CONTENT_OUTPUT, JSON.stringify({ contents }, null, 2), 'utf8');
-console.log(`✅ Generated docs-contents.json (${(Buffer.byteLength(JSON.stringify({ contents })) / 1024).toFixed(1)} KB) — for build-time static generation only`);
+// 2. Copy all .md files to public/docs (served as static assets via CDN, NOT bundled into Worker)
+// First, clean old dest to avoid stale files
+if (fs.existsSync(DOCS_PUBLIC_DEST)) fs.rmSync(DOCS_PUBLIC_DEST, { recursive: true });
+copyDocsToPublic();
+console.log(`✅ Copied .md files to public/docs — served as static CDN assets`);

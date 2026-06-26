@@ -3,8 +3,8 @@ import docsTreeRaw from './docs-tree.json';
 export interface DocNode {
   name: string;
   type: 'file' | 'directory';
-  path: string; // url friendly path string separated by /
-  slug: string[]; // array of path segments
+  path: string;
+  slug: string[];
   children?: DocNode[];
 }
 
@@ -15,6 +15,7 @@ const docsTree = docsTreeRaw as {
 
 /**
  * Get the tree structure of the DOCS/v2 folder for the sidebar.
+ * Reads from a tiny pre-generated JSON (2.9KB) — safe for Cloudflare Workers runtime.
  */
 export function getDocsTree(): DocNode[] {
   return docsTree.tree || [];
@@ -26,14 +27,3 @@ export function getDocsTree(): DocNode[] {
 export function getAllDocSlugs(): string[][] {
   return docsTree.slugs || [];
 }
-
-/**
- * Get the content of a specific markdown file given its slug.
- */
-export function getDocContent(slug: string[]): string | null {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const contentsData = require('./docs-contents.json') as { contents: Record<string, string> };
-  const key = slug.join('/');
-  return contentsData.contents[key] || null;
-}
-
